@@ -6,14 +6,14 @@ import (
 )
 
 func TestStructure(t *testing.T) {
-	class := &class{name: "mission"}
+	class := &Class{name: "mission"}
 	if class.props != nil {
 		t.Errorf("Class has props")
 	}
 	if len(class.props) > 0 {
 		t.Errorf("Props length is %d", len(class.props))
 	}
-	class.props = append(class.props, &Property{"test", atInt, "value"})
+	class.props = append(class.props, &Property{"test", TInt, "value"})
 	if class.props == nil {
 		t.Errorf("Class has no props")
 	}
@@ -45,7 +45,7 @@ var parseTests = []parseTest{
 			[]tclass{
 				{"testclass",
 					[]Property{
-						{"version", atInt, "11"},
+						{"version", TInt, "11"},
 					},
 					[]ArrayProperty{},
 					[]tclass{},
@@ -58,10 +58,10 @@ var parseTests = []parseTest{
 		"attributes", "version=11; string=\"teststring\"; float1=123.456; float2=+123.456;",
 		tclass{"mission",
 			[]Property{
-				{"version", atInt, "11"},
+				{"version", TInt, "11"},
 				{"string", TString, "teststring"},
-				{"float1", atFloat, "123.456"},
-				{"float2", atFloat, "+123.456"},
+				{"float1", TFloat, "123.456"},
+				{"float2", TFloat, "+123.456"},
 			},
 			[]ArrayProperty{},
 			[]tclass{},
@@ -73,7 +73,7 @@ var parseTests = []parseTest{
 		tclass{"mission",
 			[]Property{},
 			[]ArrayProperty{
-				{"arr", atInt, []string{"1", "2", "3"}},
+				{"arr", TInt, []string{"1", "2", "3"}},
 			},
 			[]tclass{},
 		},
@@ -88,7 +88,7 @@ var parseTests = []parseTest{
 				{"test",
 					[]Property{},
 					[]ArrayProperty{
-						{"arr", atInt, []string{"1", "2", "3"}},
+						{"arr", TInt, []string{"1", "2", "3"}},
 					},
 					[]tclass{},
 				},
@@ -101,7 +101,7 @@ var parseTests = []parseTest{
 		tclass{"mission",
 			[]Property{},
 			[]ArrayProperty{
-				{"arr", atFloat, []string{"1.2", "2.3", "3.4"}},
+				{"arr", TFloat, []string{"1.2", "2.3", "3.4"}},
 			},
 			[]tclass{},
 		},
@@ -116,7 +116,7 @@ var parseTests = []parseTest{
 				{"test",
 					[]Property{},
 					[]ArrayProperty{
-						{"arr", atFloat, []string{"1.2", "2.3", "3.4"}},
+						{"arr", TFloat, []string{"1.2", "2.3", "3.4"}},
 					},
 					[]tclass{},
 				},
@@ -189,7 +189,7 @@ func TestParseSimple(t *testing.T) {
 	if at.name != "version" {
 		t.Errorf("Prop wrong identifier")
 	}
-	if at.typ != atInt {
+	if at.typ != TInt {
 		t.Errorf("Type of prop wrong")
 	}
 	if at.value != "11" {
@@ -198,7 +198,7 @@ func TestParseSimple(t *testing.T) {
 
 }
 
-func testClass(t *testing.T, tclass tclass, class *class) {
+func testClass(t *testing.T, tclass tclass, class *Class) {
 	if tclass.name != class.name {
 		t.Errorf("Classname is %s but should be %s", class.name, tclass.name)
 		return

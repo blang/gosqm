@@ -8,8 +8,8 @@ type PropType int
 
 const (
 	TString PropType = iota
-	atFloat
-	atInt
+	TFloat
+	TInt
 )
 
 type Property struct {
@@ -24,25 +24,25 @@ type ArrayProperty struct {
 	values []string
 }
 
-type class struct {
+type Class struct {
 	name     string
 	props    []*Property
 	arrprops []*ArrayProperty
-	classes  []*class
-	parent   *class
+	classes  []*Class
+	parent   *Class
 }
 
-func (c Property) String() string {
+func (p Property) String() string {
 	return fmt.Sprintf("%s='%s' (Type: %d)\n",c.name, c.value, c.typ)
 }
 
-func (c class) String() string {
+func (c Class) String() string {
 	return fmt.Sprintf("class (name: %s), props: %s, arrprops: %s, classes: %s\n", c.name, c.props, c.arrprops, c.classes)
 }
 
 type parser struct {
 	input    string
-	class    *class //current class
+	class    *Class //current class
 	lexer    *lexer
 	buff     *itemBuffer
 	err      error
@@ -96,7 +96,7 @@ func (b *itemBuffer) lookBack() *item {
 
 func makeParser(input string) *parser {
 	l := makeLexer("sqm", input)
-	class := &class{name: "mission"}
+	class := &Class{name: "mission"}
 	parser := &parser{
 		input:  input,
 		class:  class,
@@ -155,7 +155,7 @@ func parseClassOpen(p *parser) (pstateFn, *parserError) {
 	if oblock := p.buff.next(); oblock.typ != itemOpenBlock {
 		return nil, p.makeParserError("Missing { after class definition")
 	}
-	newClass := &class{name: className, parent: p.class}
+	newClass := &Class{name: className, parent: p.class}
 	p.class = newClass
 	return parseInsideClass, nil
 }
@@ -225,7 +225,7 @@ func parseArrayPropertyValue(p *parser) (pstateFn, *parserError) {
 		p.propBuff.arrprop = nil
 		return parseInsideClass, nil
 	case itemInt:
-		p.propBuff.arrprop.typ = atInt
+		p.propBuff.arrprop.typ = TInt
 		err := parseArrayPropertyIntValues(p)
 		if err != nil {
 			return nil, err
@@ -237,7 +237,7 @@ func parseArrayPropertyValue(p *parser) (pstateFn, *parserError) {
 		p.propBuff.arrprop = nil
 		return parseInsideClass, nil
 	case itemFloat:
-		p.propBuff.arrprop.typ = atFloat
+		p.propBuff.arrprop.typ = TFloat
 		err := parseArrayPropertyFloatValues(p)
 		if err != nil {
 			return nil, err
@@ -339,7 +339,7 @@ func parsePropertyValue(p *parser) (pstateFn, *parserError) {
 		p.propBuff.prop = nil
 		return parseInsideClass, nil
 	case itemFloat:
-		p.propBuff.prop.typ = atFloat
+		p.propBuff.prop.typ = TFloat
 		v := p.buff.next()
 		p.propBuff.prop.value = v.val
 		p.ignoreSpace()
@@ -350,7 +350,7 @@ func parsePropertyValue(p *parser) (pstateFn, *parserError) {
 		p.propBuff.prop = nil
 		return parseInsideClass, nil
 	case itemInt:
-		p.propBuff.prop.typ = atInt
+		p.propBuff.prop.typ = TInt
 		v := p.buff.next()
 		p.propBuff.prop.value = v.val
 		p.ignoreSpace()
@@ -393,7 +393,7 @@ func parseInsideClass(p *parser) (pstateFn, *parserError) {
 	return parseInsideClass, nil
 }
 
-func (p *parser) run() (*class, *parserError) {
+func (p *parser) run() (*Class, *parserError) {
 	l := p.lexer
 	go l.run()
 	var err *parserError
