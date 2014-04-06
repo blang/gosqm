@@ -33,7 +33,7 @@ type Class struct {
 }
 
 func (p Property) String() string {
-	return fmt.Sprintf("%s='%s' (Type: %d)\n",c.name, c.value, c.typ)
+	return fmt.Sprintf("%s='%s' (Type: %d)\n",p.name, p.value, p.typ)
 }
 
 func (c Class) String() string {
