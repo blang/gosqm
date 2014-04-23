@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	sqm "github.com/blang/gosqm/sqmparser"
+	"github.com/blang/gosqm/sqm"
 	"io/ioutil"
 )
 

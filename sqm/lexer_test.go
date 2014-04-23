@@ -1,4 +1,4 @@
-package sqmparser
+package sqm
 
 import (
 	"fmt"
