@@ -2,7 +2,7 @@ package mission
 
 import (
 	"fmt"
-	sqm "github.com/blang/gosqm/sqmparser"
+	"github.com/blang/gosqm/sqm"
 	"sync"
 )
 

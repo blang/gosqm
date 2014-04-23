@@ -1,7 +1,7 @@
 package mission
 
 import (
-	sqm "github.com/blang/gosqm/sqmparser"
+	"github.com/blang/gosqm/sqm"
 )
 
 type MissionFile struct {
