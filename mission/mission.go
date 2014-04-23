@@ -6,15 +6,37 @@ import (
 
 type MissionFile struct {
 	Version    string
-	Mission    Mission
-	Intro      Mission
-	OutroWin   Mission
-	OutroLoose Mission
+	Mission    *Mission
+	Intro      *Mission
+	OutroWin   *Mission
+	OutroLoose *Mission
+	class      *sqm.Class
+}
+
+type Group struct {
+	Side      string
+	Waypoints []*Waypoint
+	Units     []*Unit
+	class     *sqm.Class
+	// Leader    *Unit
+}
+
+type Waypoint struct {
+}
+
+type Unit struct {
+	Position  [3]string
+	Direction string
+	Classname string
+	Skill     string
+	Formation string
+	IsLeader  bool
+	class     *sqm.Class
 }
 
 type Mission struct {
-	class sqm.Class
-	Group
+	Groups []*Group
+	class  *sqm.Class
 	// Vehicle
 	// Marker
 	// Trigger
@@ -25,9 +47,9 @@ type Intel struct {
 	StartWeather    string
 	ForecastWeather string
 	Year            string
-	Day
-	Hour
-	Minute
+	Day             string
+	Hour            string
+	Minute          string
 }
 
 //intel
