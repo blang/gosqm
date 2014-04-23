@@ -1,25 +1,25 @@
 package sqmparser
 
 import (
-	"testing"
 	"io/ioutil"
+	"testing"
 )
 
 func TestStructure(t *testing.T) {
-	class := &Class{name: "mission"}
-	if class.props != nil {
+	class := &Class{Name: "mission"}
+	if class.Props != nil {
 		t.Errorf("Class has props")
 	}
-	if len(class.props) > 0 {
-		t.Errorf("Props length is %d", len(class.props))
+	if len(class.Props) > 0 {
+		t.Errorf("Props length is %d", len(class.Props))
 	}
-	class.props = append(class.props, &Property{"test", TInt, "value"})
-	if class.props == nil {
+	class.Props = append(class.Props, &Property{"test", TInt, "value"})
+	if class.Props == nil {
 		t.Errorf("Class has no props")
 	}
 
-	if len(class.props) != 1 {
-		t.Errorf("Props length is %d", len(class.props))
+	if len(class.Props) != 1 {
+		t.Errorf("Props length is %d", len(class.Props))
 	}
 }
 
@@ -155,8 +155,8 @@ var parseTests = []parseTest{
 
 func TestParse(t *testing.T) {
 	for _, test := range parseTests {
-		p := makeParser(test.input)
-		c, err := p.run()
+		p := MakeParser(test.input)
+		c, err := p.Run()
 		if err != nil {
 			t.Errorf("Parser returned with error %q", err)
 			continue
@@ -167,81 +167,81 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseSimple(t *testing.T) {
-	p := makeParser("class testclass { version=11; };")
-	c, err := p.run()
+	p := MakeParser("class testclass { version=11; };")
+	c, err := p.Run()
 	if err != nil {
 		t.Errorf("Parser returned with error %q", err)
 	}
-	if len(c.classes) != 1 {
+	if len(c.Classes) != 1 {
 		t.Errorf("Class not processed")
 	}
-	tc := c.classes[0]
-	if tc.name != "testclass" {
+	tc := c.Classes[0]
+	if tc.Name != "testclass" {
 		t.Errorf("Wrong class name")
 	}
-	if len(tc.props) != 1 {
+	if len(tc.Props) != 1 {
 		t.Errorf("Attribute not processed")
 	}
-	if tc.arrprops != nil && len(tc.arrprops) > 0 {
+	if tc.Arrprops != nil && len(tc.Arrprops) > 0 {
 		t.Errorf("Array props are not empty")
 	}
-	at := tc.props[0]
-	if at.name != "version" {
+	at := tc.Props[0]
+	if at.Name != "version" {
 		t.Errorf("Prop wrong identifier")
 	}
-	if at.typ != TInt {
+	if at.Typ != TInt {
 		t.Errorf("Type of prop wrong")
 	}
-	if at.value != "11" {
+	if at.Value != "11" {
 		t.Errorf("Wrong prop value")
 	}
 
 }
 
 func testClass(t *testing.T, tclass tclass, class *Class) {
-	if tclass.name != class.name {
-		t.Errorf("Classname is %s but should be %s", class.name, tclass.name)
+	if tclass.name != class.Name {
+		t.Errorf("Classname is %s but should be %s", class.Name, tclass.name)
 		return
 	}
-	if (class.arrprops == nil && len(tclass.arrprops) > 0) || (class.arrprops != nil && len(tclass.props) != len(class.props)) {
-		t.Errorf("Class %s Prop length is %d but should be %d", tclass.name, len(class.props), len(tclass.props))
+	if (class.Arrprops == nil && len(tclass.arrprops) > 0) || (class.Arrprops != nil && len(tclass.props) != len(class.Props)) {
+		t.Errorf("Class %s Prop length is %d but should be %d", tclass.name, len(class.Props), len(tclass.props))
 		return
 	}
-	if (class.arrprops == nil && len(tclass.arrprops) > 0) || (class.arrprops != nil && len(tclass.arrprops) != len(class.arrprops)) {
-		t.Errorf("Class %s Prop length is %d but should be %d", tclass.name, len(class.props), len(tclass.props))
+	if (class.Arrprops == nil && len(tclass.arrprops) > 0) || (class.Arrprops != nil && len(tclass.arrprops) != len(class.Arrprops)) {
+		t.Errorf("Class %s Prop length is %d but should be %d", tclass.name, len(class.Props), len(tclass.props))
 		return
 	}
-	if (class.classes == nil && len(tclass.classes) > 0) || (class.classes != nil && len(tclass.classes) != len(class.classes)) {
-		t.Errorf("Class %s Classes length is %d but should be %d", tclass.name, len(class.classes), len(tclass.classes))
+	if (class.Classes == nil && len(tclass.classes) > 0) || (class.Classes != nil && len(tclass.classes) != len(class.Classes)) {
+		t.Errorf("Class %s Classes length is %d but should be %d", tclass.name, len(class.Classes), len(tclass.classes))
 		return
 	}
 	for i, tprop := range tclass.props {
-		prop := class.props[i]
-		if tprop.name != prop.name {
-			t.Errorf("Class %s Propname %s but should be %s", tclass.name, prop.name, tprop.name)
+		prop := class.Props[i]
+		if tprop.Name != prop.Name {
+			t.Errorf("Class %s Propname %s but should be %s", tclass.name, prop.Name, tprop.Name)
 			return
 		}
-		if tprop.typ != prop.typ {
-			t.Errorf("Class %s Proptype %s but should be %s", tclass.name, prop.typ, tprop.typ)
+		if tprop.Typ != prop.Typ {
+			t.Errorf("Class %s Proptype %s but should be %s", tclass.name, prop.Typ, tprop.Typ)
 			return
 		}
-		if tprop.value != prop.value {
-			t.Errorf("Class %s Propvalue %s but should be %s", tclass.name, prop.value, tprop.value)
+		if tprop.Value != prop.Value {
+			t.Errorf("Class %s Propvalue %s but should be %s", tclass.name, prop.Value, tprop.Value)
 			return
 		}
 	}
 	for i, tprop := range tclass.arrprops {
-		prop := class.arrprops[i]
-		if tprop.name != prop.name {
-			t.Errorf("Class %s ArrPropname %s but should be %s", tclass.name, prop.name, tprop.name)
+		prop := class.Arrprops[i]
+		if tprop.Name != prop.Name {
+			t.Errorf("Class %s ArrPropname %s but should be %s", tclass.name, prop.Name, tprop.Name)
 			return
 		}
-		if tprop.typ != prop.typ {
-			t.Errorf("Class %s ArrProptype %s but should be %s", tclass.name, prop.typ, tprop.typ)
+		if tprop.Typ != prop.Typ {
+			t.Errorf("Class %s ArrProptype %s but should be %s", tclass.name, prop.Typ, tprop.Typ)
 			return
 		}
-		for j, tval := range tprop.values {
-			val := prop.values[j]
+		for j, tval := range tprop.Values {
+			val := prop.Values[j]
 			if tval != val {
 				t.Errorf("Class %s ArrPropvalue %s but should be %s", tclass.name, val, tval)
 				return
@@ -249,12 +249,11 @@ func testClass(t *testing.T, tclass tclass, class *Class) {
 		}
 	}
 	for k, tsubc := range tclass.classes {
-		subc := class.classes[k]
+		subc := class.Classes[k]
 		testClass(t, tsubc, subc)
 	}
 
 }
-
 
 func TestParseMissionSQM(t *testing.T) {
 	const name = "Mission.sqm parser"
@@ -267,9 +266,9 @@ func TestParseMissionSQM(t *testing.T) {
 		t.Errorf("Could not open mission.sqm")
 		return
 	}
-	p := makeParser(string(buf))
-	// c, perr := p.run()
-  _, perr := p.run()
+	p := MakeParser(string(buf))
+	// c, perr := p.Run()
+	_, perr := p.Run()
 	if perr != nil {
 		t.Errorf("Parser returned with error %q", perr)
 	}
