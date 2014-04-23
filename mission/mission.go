@@ -1,35 +1,33 @@
 package mission
 
-type missionFile struct {
-  version string
-  mission mission
-  intro mission
-  outroWin mission
-  outroLoose mission
+import (
+	sqm "github.com/blang/gosqm/sqmparser"
+)
+
+type MissionFile struct {
+	Version    string
+	Mission    Mission
+	Intro      Mission
+	OutroWin   Mission
+	OutroLoose Mission
 }
 
-
-type mission struct {
-	addons []string
-	addonsAuto []string
-	randomSeed int
-	intel *intel
-	group
-	vehicle
-	marker
-	trigger
-
-
+type Mission struct {
+	class sqm.Class
+	Group
+	// Vehicle
+	// Marker
+	// Trigger
 }
 
-type intel struct {
-	resistanceWest string
-	startWeather string
-	forecastWeather string
-	year string
-	day
-	hour
-	minute
+type Intel struct {
+	ResistanceWest  string
+	StartWeather    string
+	ForecastWeather string
+	Year            string
+	Day
+	Hour
+	Minute
 }
 
 //intel
