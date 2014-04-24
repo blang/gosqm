@@ -36,8 +36,9 @@ type Unit struct {
 }
 
 type Marker struct {
-	Name       string
-	Position   [3]string
+	Name     string
+	Position [3]string
+	// Angle      string //TODO: Angle?
 	Type       string
 	IsEllipse  bool
 	Text       string
@@ -48,12 +49,28 @@ type Marker struct {
 	class      *sqm.Class
 }
 
+type Sensor struct {
+	Name            string
+	Position        [3]string
+	Size            [2]string
+	Angle           string
+	IsRectangle     bool
+	ActivationBy    string
+	IsRepeating     bool
+	Age             string
+	Condition       string
+	OnActivation    string
+	IsInterruptible bool
+	class           *sqm.Class
+	classEffects    *sqm.Class
+}
+
 type Mission struct {
 	Groups []*Group
 	class  *sqm.Class
 	// Vehicle
 	Markers []*Marker
-	// Trigger
+	Sensors []*Sensor
 }
 
 type Intel struct {

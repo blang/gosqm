@@ -53,6 +53,8 @@ func parseMission(class *sqm.Class, mission *Mission) {
 			parseGroups(baseClass, mission)
 		case "Markers":
 			parseMarkers(baseClass, mission)
+		case "Sensors":
+			parseSensors(baseClass, mission)
 		}
 
 	}
@@ -155,5 +157,52 @@ func parseMarker(c *sqm.Class, marker *Marker) {
 		case "position":
 			marker.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
 		}
+	}
+}
+
+func parseSensors(class *sqm.Class, mission *Mission) {
+	for _, sensorClass := range class.Classes {
+		sensor := &Sensor{}
+		mission.Sensors = append(mission.Sensors, sensor)
+		parseSensor(sensorClass, sensor)
+	}
+}
+
+func parseSensor(c *sqm.Class, sensor *Sensor) {
+	sensor.class = c
+	for _, prop := range c.Props {
+		switch prop.Name {
+		case "name":
+			sensor.Name = prop.Value
+		case "a":
+			sensor.Size[0] = prop.Value
+		case "b":
+			sensor.Size[1] = prop.Value
+		case "angle":
+			sensor.Angle = prop.Value
+		case "rectangular":
+			sensor.IsRectangle = prop.Value == "1"
+		case "activationBy":
+			sensor.ActivationBy = prop.Value
+		case "repeating":
+			sensor.IsRepeating = prop.Value == "1"
+		case "age":
+			sensor.Age = prop.Value
+		case "expCond":
+			sensor.Condition = prop.Value
+		case "expActiv":
+			sensor.OnActivation = prop.Value
+		case "interruptable":
+			sensor.IsInterruptible = prop.Value == "1"
+		}
+	}
+	for _, arrprop := range c.Arrprops {
+		switch arrprop.Name {
+		case "position":
+			sensor.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		}
+	}
+	if len(sensor.class.Classes) > 0 && sensor.class.Classes[0].Name == "Effects" {
+		sensor.classEffects = sensor.class.Classes[0]
 	}
 }
