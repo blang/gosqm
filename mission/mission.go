@@ -25,6 +25,7 @@ type Waypoint struct {
 }
 
 type Unit struct {
+	Name      string
 	Position  [3]string
 	Direction string
 	Classname string
@@ -34,11 +35,24 @@ type Unit struct {
 	class     *sqm.Class
 }
 
+type Marker struct {
+	Name       string
+	Position   [3]string
+	Type       string
+	IsEllipse  bool
+	Text       string
+	ColorName  string
+	FillName   string
+	DrawBorder bool
+	Size       [2]string
+	class      *sqm.Class
+}
+
 type Mission struct {
 	Groups []*Group
 	class  *sqm.Class
 	// Vehicle
-	// Marker
+	Markers []*Marker
 	// Trigger
 }
 

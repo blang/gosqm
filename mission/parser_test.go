@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestParseGroupMember(t *testing.T) {
+func TestParseGroups(t *testing.T) {
 	Convey("Given a valid groups class with subclasses", t, func() {
 		unitclass := &sqm.Class{
 			Props: []*sqm.Property{
@@ -54,6 +54,9 @@ func TestParseGroupMember(t *testing.T) {
 				So(unit.Skill, ShouldEqual, "0.60000002")
 				So(unit.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
 			})
+			Convey("Pointer to class was set", func() {
+				So(unit.class, ShouldPointTo, unitclass)
+			})
 		})
 		Convey("When parse groups", func() {
 			mission := &Mission{}
@@ -66,6 +69,61 @@ func TestParseGroupMember(t *testing.T) {
 			})
 			Convey("Group should have right side", func() {
 				So(mission.Groups[0].Side, ShouldEqual, "WEST")
+			})
+		})
+	})
+}
+
+func TestParseMarkers(t *testing.T) {
+
+	Convey("Given a set of valid marker classes", t, func() {
+		markerClass := &sqm.Class{
+			Name: "Item0",
+			Arrprops: []*sqm.ArrayProperty{
+				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+			},
+			Props: []*sqm.Property{
+				&sqm.Property{"name", sqm.TString, "m1"},
+				&sqm.Property{"markerType", sqm.TString, "ELLIPSE"},
+				&sqm.Property{"type", sqm.TString, "Empty"},
+				&sqm.Property{"colorName", sqm.TString, "ColorRed"},
+				&sqm.Property{"fillName", sqm.TString, "Border"},
+				&sqm.Property{"a", sqm.TInt, "1000"},
+				&sqm.Property{"b", sqm.TInt, "2000"},
+				&sqm.Property{"drawBorder", sqm.TInt, "1"},
+			},
+		}
+		markersClass := &sqm.Class{
+			Name: "Markers",
+			Classes: []*sqm.Class{
+				markerClass,
+			},
+		}
+		Convey("When parse markers", func() {
+			mission := &Mission{}
+			parseMarkers(markersClass, mission)
+			Convey("Mission has one marker", func() {
+				So(len(mission.Markers), ShouldEqual, 1)
+			})
+			Convey("Marker has type", func() {
+				So(mission.Markers[0].Type, ShouldEqual, "Empty")
+			})
+		})
+		Convey("When parse single marker", func() {
+			m := &Marker{}
+			parseMarker(markerClass, m)
+			Convey("All properties are correct", func() {
+				So(m.Name, ShouldEqual, "m1")
+				So(m.IsEllipse, ShouldBeTrue)
+				So(m.Type, ShouldEqual, "Empty")
+				So(m.ColorName, ShouldEqual, "ColorRed")
+				So(m.FillName, ShouldEqual, "Border")
+				So(m.Size, ShouldResemble, [2]string{"1000", "2000"})
+				So(m.DrawBorder, ShouldBeTrue)
+				So(m.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+			})
+			Convey("Pointer to class was set", func() {
+				So(m.class, ShouldPointTo, markerClass)
 			})
 		})
 	})

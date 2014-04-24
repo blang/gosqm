@@ -47,11 +47,14 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 }
 
 func parseMission(class *sqm.Class, mission *Mission) {
-	for _, base := range class.Classes {
-		switch base.Name {
+	for _, baseClass := range class.Classes {
+		switch baseClass.Name {
 		case "Groups":
-			parseGroups(base, mission)
+			parseGroups(baseClass, mission)
+		case "Markers":
+			parseMarkers(baseClass, mission)
 		}
+
 	}
 }
 
@@ -84,15 +87,17 @@ func parseGroup(class *sqm.Class, group *Group) {
 func parseGroupMembers(class *sqm.Class, group *Group) {
 	for _, unitClass := range class.Classes {
 		unit := &Unit{}
-		unit.class = unitClass
 		group.Units = append(group.Units, unit)
-		parseGroupMember(class, unit)
+		parseGroupMember(unitClass, unit)
 	}
 }
 
 func parseGroupMember(class *sqm.Class, unit *Unit) {
+	unit.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
+		case "name":
+			unit.Name = prop.Value
 		case "vehicle":
 			unit.Classname = prop.Value
 		case "skill":
@@ -109,6 +114,46 @@ func parseGroupMember(class *sqm.Class, unit *Unit) {
 		switch arrprop.Name {
 		case "position":
 			unit.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		}
+	}
+}
+
+func parseMarkers(class *sqm.Class, mission *Mission) {
+	for _, markerClass := range class.Classes {
+		marker := &Marker{}
+		mission.Markers = append(mission.Markers, marker)
+		parseMarker(markerClass, marker)
+	}
+}
+
+func parseMarker(c *sqm.Class, marker *Marker) {
+	marker.class = c
+	for _, prop := range c.Props {
+		switch prop.Name {
+		case "name":
+			marker.Name = prop.Value
+		case "text":
+			marker.Text = prop.Value
+		case "type":
+			marker.Type = prop.Value
+		case "markerType":
+			marker.IsEllipse = prop.Value == "ELLIPSE"
+		case "colorName":
+			marker.ColorName = prop.Value
+		case "fillName":
+			marker.FillName = prop.Value
+		case "a":
+			marker.Size[0] = prop.Value
+		case "b":
+			marker.Size[1] = prop.Value
+		case "drawBorder":
+			marker.DrawBorder = prop.Value == "1"
+		}
+	}
+	for _, arrprop := range c.Arrprops {
+		switch arrprop.Name {
+		case "position":
+			marker.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
 		}
 	}
 }
