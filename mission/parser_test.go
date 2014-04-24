@@ -9,6 +9,7 @@ import (
 func TestParseGroups(t *testing.T) {
 	Convey("Given a valid groups class with subclasses", t, func() {
 		unitclass := &sqm.Class{
+			Name: "Item0",
 			Props: []*sqm.Property{
 				&sqm.Property{"azimut", sqm.TFloat, "12.3"},
 				&sqm.Property{"vehicle", sqm.TString, "classname"},
@@ -19,6 +20,28 @@ func TestParseGroups(t *testing.T) {
 
 			Arrprops: []*sqm.ArrayProperty{
 				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+			},
+		}
+		effectsClass := &sqm.Class{
+			Name: "Effects",
+		}
+		waypointclass := &sqm.Class{
+			Name: "Item0",
+			Props: []*sqm.Property{
+				&sqm.Property{"type", sqm.TString, "AND"},
+				&sqm.Property{"showWP", sqm.TString, "NEVER"},
+			},
+			Arrprops: []*sqm.ArrayProperty{
+				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+			},
+			Classes: []*sqm.Class{effectsClass},
+		}
+
+		groupwaypointsclass := &sqm.Class{
+			Name: "Waypoints",
+
+			Classes: []*sqm.Class{
+				waypointclass,
 			},
 		}
 		groupvehiclesclass := &sqm.Class{
@@ -35,6 +58,7 @@ func TestParseGroups(t *testing.T) {
 			},
 			Classes: []*sqm.Class{
 				groupvehiclesclass,
+				groupwaypointsclass,
 			},
 		}
 		groupsclass := &sqm.Class{
@@ -69,6 +93,30 @@ func TestParseGroups(t *testing.T) {
 			})
 			Convey("Group should have right side", func() {
 				So(mission.Groups[0].Side, ShouldEqual, "WEST")
+			})
+
+		})
+		Convey("When parse group", func() {
+			group := &Group{}
+			parseGroup(groupclass, group)
+
+			Convey("Group has one waypoint", func() {
+				So(len(group.Waypoints), ShouldEqual, 1)
+			})
+		})
+		Convey("When parse waypoint", func() {
+			wp := &Waypoint{}
+			parseGroupWaypoint(waypointclass, wp)
+			Convey("All properties are correct", func() {
+				So(wp.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+				So(wp.Type, ShouldEqual, "AND")
+				So(wp.ShowWP, ShouldEqual, "NEVER")
+			})
+			Convey("Pointer to class was set", func() {
+				So(wp.class, ShouldPointTo, waypointclass)
+			})
+			Convey("Pointer to effects class was set", func() {
+				So(wp.classEffects, ShouldPointTo, effectsClass)
 			})
 		})
 	})
@@ -192,6 +240,62 @@ func TestParseSensors(t *testing.T) {
 			})
 			Convey("Pointer to effects class was set", func() {
 				So(s.classEffects, ShouldPointTo, effectsClass)
+			})
+		})
+	})
+}
+
+func TestParseVehicles(t *testing.T) {
+	// position[]={8067.7783,296.04001,1909.3773};
+	//      azimut=234.35667;
+	//      id=74;
+	//      side="EMPTY";
+	//      vehicle="HeliH";
+	//      skill=0.60000002;
+	Convey("Given a valid vehicle class", t, func() {
+		vehClass := &sqm.Class{
+			Name: "Item0",
+			Arrprops: []*sqm.ArrayProperty{
+				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+			},
+			Props: []*sqm.Property{
+				&sqm.Property{"name", sqm.TString, "s1"},
+				&sqm.Property{"azimut", sqm.TFloat, "30.2"},
+				&sqm.Property{"side", sqm.TString, "EMPTY"},
+				&sqm.Property{"vehicle", sqm.TString, "HeliH"},
+				&sqm.Property{"skill", sqm.TFloat, "0.6"},
+			},
+		}
+		vehsClass := &sqm.Class{
+			Name: "Vehicles",
+			Classes: []*sqm.Class{
+				vehClass,
+			},
+		}
+
+		Convey("When parse sensors", func() {
+			mission := &Mission{}
+			parseVehicles(vehsClass, mission)
+			Convey("Mission has one vehicle", func() {
+				So(len(mission.Vehicles), ShouldEqual, 1)
+			})
+			Convey("Vehicle has classname", func() {
+				So(mission.Vehicles[0].Classname, ShouldEqual, "HeliH")
+			})
+		})
+		Convey("When parse single vehicle", func() {
+			v := &Vehicle{}
+			parseVehicle(vehClass, v)
+			Convey("All properties are correct", func() {
+				So(v.Name, ShouldEqual, "s1")
+				So(v.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+				So(v.Angle, ShouldEqual, "30.2")
+				So(v.Side, ShouldEqual, "EMPTY")
+				So(v.Classname, ShouldEqual, "HeliH")
+				So(v.Skill, ShouldEqual, "0.6")
+			})
+			Convey("Pointer to class was set", func() {
+				So(v.class, ShouldPointTo, vehClass)
 			})
 		})
 	})

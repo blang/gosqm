@@ -55,6 +55,8 @@ func parseMission(class *sqm.Class, mission *Mission) {
 			parseMarkers(baseClass, mission)
 		case "Sensors":
 			parseSensors(baseClass, mission)
+		case "Vehicles":
+			parseVehicles(baseClass, mission)
 		}
 
 	}
@@ -80,9 +82,39 @@ func parseGroup(class *sqm.Class, group *Group) {
 	for _, subclass := range class.Classes {
 		switch subclass.Name {
 		case "Vehicles":
-
 			parseGroupMembers(subclass, group)
+		case "Waypoints":
+			parseGroupWaypoints(subclass, group)
 		}
+	}
+}
+
+func parseGroupWaypoints(class *sqm.Class, group *Group) {
+	for _, wpClass := range class.Classes {
+		wp := &Waypoint{}
+		group.Waypoints = append(group.Waypoints, wp)
+		parseGroupWaypoint(wpClass, wp)
+	}
+}
+
+func parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
+	wp.class = class
+	for _, prop := range class.Props {
+		switch prop.Name {
+		case "type":
+			wp.Type = prop.Value
+		case "showWP":
+			wp.ShowWP = prop.Value
+		}
+	}
+	for _, arrprop := range class.Arrprops {
+		switch arrprop.Name {
+		case "position":
+			wp.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		}
+	}
+	if len(wp.class.Classes) > 0 && wp.class.Classes[0].Name == "Effects" {
+		wp.classEffects = wp.class.Classes[0]
 	}
 }
 
@@ -204,5 +236,37 @@ func parseSensor(c *sqm.Class, sensor *Sensor) {
 	}
 	if len(sensor.class.Classes) > 0 && sensor.class.Classes[0].Name == "Effects" {
 		sensor.classEffects = sensor.class.Classes[0]
+	}
+}
+
+func parseVehicles(class *sqm.Class, mission *Mission) {
+	for _, vehClass := range class.Classes {
+		veh := &Vehicle{}
+		mission.Vehicles = append(mission.Vehicles, veh)
+		parseVehicle(vehClass, veh)
+	}
+}
+
+func parseVehicle(c *sqm.Class, veh *Vehicle) {
+	veh.class = c
+	for _, prop := range c.Props {
+		switch prop.Name {
+		case "name":
+			veh.Name = prop.Value
+		case "azimut":
+			veh.Angle = prop.Value
+		case "vehicle":
+			veh.Classname = prop.Value
+		case "side":
+			veh.Side = prop.Value
+		case "skill":
+			veh.Skill = prop.Value
+		}
+	}
+	for _, arrprop := range c.Arrprops {
+		switch arrprop.Name {
+		case "position":
+			veh.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		}
 	}
 }

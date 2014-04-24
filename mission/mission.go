@@ -22,6 +22,11 @@ type Group struct {
 }
 
 type Waypoint struct {
+	Position     [3]string
+	Type         string
+	ShowWP       string
+	class        *sqm.Class
+	classEffects *sqm.Class
 }
 
 type Unit struct {
@@ -65,12 +70,22 @@ type Sensor struct {
 	classEffects    *sqm.Class
 }
 
+type Vehicle struct {
+	Name      string
+	Position  [3]string
+	Angle     string
+	Classname string
+	Skill     string
+	class     *sqm.Class
+	Side      string //Always empty?
+}
+
 type Mission struct {
-	Groups []*Group
-	class  *sqm.Class
-	// Vehicle
-	Markers []*Marker
-	Sensors []*Sensor
+	Groups   []*Group
+	Vehicles []*Vehicle
+	Markers  []*Marker
+	Sensors  []*Sensor
+	class    *sqm.Class
 }
 
 type Intel struct {
