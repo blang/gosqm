@@ -81,6 +81,7 @@ type Vehicle struct {
 }
 
 type Mission struct {
+	Intel    *Intel
 	Groups   []*Group
 	Vehicles []*Vehicle
 	Markers  []*Marker
@@ -93,9 +94,11 @@ type Intel struct {
 	StartWeather    string
 	ForecastWeather string
 	Year            string
+	Month           string
 	Day             string
 	Hour            string
 	Minute          string
+	class           *sqm.Class
 }
 
 //intel

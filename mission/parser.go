@@ -29,10 +29,10 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 	}
 	for _, stage := range class.Classes {
 		switch stage.Name {
-		case "Mission":
-			parseMission(stage, mf.Mission)
 		case "Intro":
 			parseMission(stage, mf.Intro)
+		case "Mission":
+			parseMission(stage, mf.Mission)
 		case "OutroWin":
 			parseMission(stage, mf.OutroWin)
 		case "OutroLoose":
@@ -49,6 +49,8 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 func parseMission(class *sqm.Class, mission *Mission) {
 	for _, baseClass := range class.Classes {
 		switch baseClass.Name {
+		case "Intel":
+			parseIntel(baseClass, mission)
 		case "Groups":
 			parseGroups(baseClass, mission)
 		case "Markers":
@@ -62,17 +64,44 @@ func parseMission(class *sqm.Class, mission *Mission) {
 	}
 }
 
-func parseGroups(class *sqm.Class, Mission *Mission) {
+func parseIntel(class *sqm.Class, mission *Mission) {
+	intel := &Intel{}
+	intel.class = class
+	for _, prop := range class.Props {
+		switch prop.Name {
+		case "resistanceWest":
+			intel.ResistanceWest = prop.Value
+		case "startWeather":
+			intel.StartWeather = prop.Value
+		case "forecastWeather":
+			intel.ForecastWeather = prop.Value
+		case "year":
+			intel.Year = prop.Value
+		case "month":
+			intel.Month = prop.Value
+		case "day":
+			intel.Day = prop.Value
+		case "hour":
+			intel.Hour = prop.Value
+		case "minute":
+			intel.Minute = prop.Value
+		}
+	}
+	mission.Intel = intel
+}
+
+func parseGroups(class *sqm.Class, mission *Mission) {
 	for _, groupClass := range class.Classes {
 		group := &Group{}
-		group.class = groupClass
-		Mission.Groups = append(Mission.Groups, group)
+
+		mission.Groups = append(mission.Groups, group)
 		parseGroup(groupClass, group)
 	}
 }
 
 //TODO: Cross Side grouping possible in editor?
 func parseGroup(class *sqm.Class, group *Group) {
+	group.class = class
 	//parse side
 	for _, prop := range class.Props {
 		if prop.Name == "side" {

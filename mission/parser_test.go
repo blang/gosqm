@@ -6,6 +6,42 @@ import (
 	"testing"
 )
 
+func TestParseIntel(t *testing.T) {
+	Convey("Given a valid intel class", t, func() {
+		intelclass := &sqm.Class{
+			Name: "Intel",
+			Props: []*sqm.Property{
+				&sqm.Property{"resistanceWest", sqm.TInt, "0"},
+				&sqm.Property{"startWeather", sqm.TFloat, "0.3"},
+				&sqm.Property{"forecastWeather", sqm.TFloat, "0.8"},
+				&sqm.Property{"year", sqm.TInt, "2009"},
+				&sqm.Property{"month", sqm.TInt, "10"},
+				&sqm.Property{"day", sqm.TInt, "28"},
+				&sqm.Property{"hour", sqm.TInt, "6"},
+				&sqm.Property{"minute", sqm.TInt, "5"},
+			},
+		}
+		Convey("When parse intel", func() {
+			mission := &Mission{}
+			parseIntel(intelclass, mission)
+			i := mission.Intel
+			Convey("All properties are correct", func() {
+				So(i.ResistanceWest, ShouldEqual, "0")
+				So(i.StartWeather, ShouldEqual, "0.3")
+				So(i.ForecastWeather, ShouldEqual, "0.8")
+				So(i.Year, ShouldEqual, "2009")
+				So(i.Month, ShouldEqual, "10")
+				So(i.Day, ShouldEqual, "28")
+				So(i.Hour, ShouldEqual, "6")
+				So(i.Minute, ShouldEqual, "5")
+			})
+			Convey("Pointer to class was set", func() {
+				So(i.class, ShouldPointTo, intelclass)
+			})
+		})
+	})
+}
+
 func TestParseGroups(t *testing.T) {
 	Convey("Given a valid groups class with subclasses", t, func() {
 		unitclass := &sqm.Class{
