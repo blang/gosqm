@@ -274,3 +274,20 @@ func TestParseMissionSQM(t *testing.T) {
 	}
 	//t.Logf("Class parsed: %q", c)
 }
+
+func BenchmarkParseMissionSQM(b *testing.B) {
+	buf, err := ioutil.ReadFile("./mission.sqm")
+	bufstr := string(buf)
+	if err != nil {
+		b.Errorf("Could not open mission.sqm")
+		return
+	}
+	for n := 0; n < b.N; n++ {
+		p := MakeParser(bufstr)
+		// c, perr := p.Run()
+		_, perr := p.Run()
+		if perr != nil {
+			b.Errorf("Parser returned with error %q", perr)
+		}
+	}
+}
