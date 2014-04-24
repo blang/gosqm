@@ -81,12 +81,14 @@ type Vehicle struct {
 }
 
 type Mission struct {
-	Intel    *Intel
-	Groups   []*Group
-	Vehicles []*Vehicle
-	Markers  []*Marker
-	Sensors  []*Sensor
-	class    *sqm.Class
+	Addons     []string
+	AddonsAuto []string
+	Intel      *Intel
+	Groups     []*Group
+	Vehicles   []*Vehicle
+	Markers    []*Marker
+	Sensors    []*Sensor
+	class      *sqm.Class
 }
 
 type Intel struct {

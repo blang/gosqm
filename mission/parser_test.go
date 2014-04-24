@@ -6,6 +6,26 @@ import (
 	"testing"
 )
 
+func TestParseMission(t *testing.T) {
+	Convey("Given a fresh mission class", t, func() {
+		missionclass := &sqm.Class{
+			Name: "Mission",
+			Arrprops: []*sqm.ArrayProperty{
+				&sqm.ArrayProperty{"addOns", sqm.TString, []string{"addon1", "addon2", "addon3"}},
+				&sqm.ArrayProperty{"addOnsAuto", sqm.TString, []string{"addon4", "addon5", "addon6"}},
+			},
+		}
+		Convey("When parse addons", func() {
+			m := &Mission{}
+			parseMissionAddons(missionclass, m)
+			Convey("All properties are correct", func() {
+				So(m.Addons, ShouldResemble, []string{"addon1", "addon2", "addon3"})
+				So(m.AddonsAuto, ShouldResemble, []string{"addon4", "addon5", "addon6"})
+			})
+		})
+	})
+}
+
 func TestParseIntel(t *testing.T) {
 	Convey("Given a valid intel class", t, func() {
 		intelclass := &sqm.Class{
