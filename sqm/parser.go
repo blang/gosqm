@@ -2,10 +2,11 @@ package sqm
 
 import (
 	"fmt"
+	"io"
+	"strings"
 )
 
 type Parser struct {
-	input    string
 	class    *Class //current class
 	lexer    *lexer
 	buff     *itemBuffer
@@ -58,11 +59,21 @@ func (b *itemBuffer) lookBack() *item {
 	return b.prev
 }
 
-func MakeParser(input string) *Parser {
-	l := makeLexer("sqm", input)
+func MakeParserString(input string) *Parser {
+	l := makeLexer("sqm", strings.NewReader(input))
 	class := &Class{Name: "mission"}
 	parser := &Parser{
-		input: input,
+		class: class,
+		lexer: l,
+		buff:  makeItemBuffer(l.items),
+	}
+	return parser
+}
+
+func MakeParser(r io.Reader) *Parser {
+	l := makeLexer("sqm", r)
+	class := &Class{Name: "mission"}
+	parser := &Parser{
 		class: class,
 		lexer: l,
 		buff:  makeItemBuffer(l.items),

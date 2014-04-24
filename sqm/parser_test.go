@@ -1,7 +1,7 @@
 package sqm
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -155,7 +155,7 @@ var parseTests = []parseTest{
 
 func TestParse(t *testing.T) {
 	for _, test := range parseTests {
-		p := MakeParser(test.input)
+		p := MakeParserString(test.input)
 		c, err := p.Run()
 		if err != nil {
 			t.Errorf("Parser returned with error %q", err)
@@ -167,7 +167,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseSimple(t *testing.T) {
-	p := MakeParser("class testclass { version=11; };")
+	p := MakeParserString("class testclass { version=11; };")
 	c, err := p.Run()
 	if err != nil {
 		t.Errorf("Parser returned with error %q", err)
@@ -195,7 +195,6 @@ func TestParseSimple(t *testing.T) {
 	if at.Value != "11" {
 		t.Errorf("Wrong prop value")
 	}
-
 }
 
 func testClass(t *testing.T, tclass tclass, class *Class) {
@@ -261,12 +260,13 @@ func TestParseMissionSQM(t *testing.T) {
 		t.Skip("Skip mission.sqm in short mode")
 		return
 	}
-	buf, err := ioutil.ReadFile("./mission.sqm")
+	f, err := os.Open("./mission.sqm")
+	// buf, err := ioutil.ReadFile("./mission.sqm")
 	if err != nil {
 		t.Errorf("Could not open mission.sqm")
 		return
 	}
-	p := MakeParser(string(buf))
+	p := MakeParser(f)
 	// c, perr := p.Run()
 	_, perr := p.Run()
 	if perr != nil {

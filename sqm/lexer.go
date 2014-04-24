@@ -1,12 +1,17 @@
 package sqm
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"strings"
-	"unicode/utf8"
 )
 
 const eof rune = -1
+const (
+	BUFREADER_SIZE   = 16
+	BUFFER_INIT_SIZE = 16
+)
 
 type itemType int
 
@@ -48,12 +53,14 @@ func (i item) String() string {
 
 type stateFn func(*lexer) stateFn
 type lexer struct {
-	name  string    //used for errors
-	input string    //string being scanned
-	start int       // start position of the item
-	pos   int       // current position in the input
-	width int       // width of last rune read
-	items chan item // channel of scanned items
+	name    string //used for errors
+	rd      *bufio.Reader
+	buf     []rune
+	start   int // start position of the item
+	pos     int // current position in the input
+	lastpos int
+	width   int       // width of last rune read
+	items   chan item // channel of scanned items
 }
 
 // var startState stateFn = func(l *lexer) stateFn {
@@ -64,11 +71,14 @@ type lexer struct {
 
 var startState stateFn = lexInsideClass
 
-func makeLexer(name, input string) *lexer {
+func makeLexer(name string, rd io.Reader) *lexer {
+	bufrd := bufio.NewReaderSize(rd, BUFREADER_SIZE)
+
 	l := &lexer{
 		name:  name,
-		input: input,
 		items: make(chan item, 10),
+		buf:   make([]rune, 0, BUFFER_INIT_SIZE),
+		rd:    bufrd,
 	}
 	return l
 }
@@ -87,19 +97,75 @@ func (l *lexer) run() {
 }
 
 func (l *lexer) emit(t itemType) {
-	l.items <- item{t, l.start, l.input[l.start:l.pos]}
-	l.start = l.pos
+	//TODO: transmit correct token positions
+	l.items <- item{t, l.start, string(l.buf[l.start:l.pos])}
+
+	//reset positions to reuse buffer
+	if l.pos < l.lastpos { //there are read bytes left
+		var newbuf []rune
+		if (l.lastpos - l.pos) > BUFFER_INIT_SIZE {
+			newbuf = make([]rune, 0, l.lastpos-l.pos)
+		} else {
+			newbuf = make([]rune, 0, BUFFER_INIT_SIZE)
+		}
+		for i := l.pos; i < l.lastpos; i++ {
+			newbuf = append(newbuf, l.buf[i])
+		}
+		l.buf = newbuf
+		l.lastpos = l.lastpos - l.pos
+	} else {
+		l.lastpos = 0
+	}
+
+	l.start = 0
+	l.pos = 0
+
 }
 
 func (l *lexer) next() (r rune) {
-	if l.pos >= len(l.input) {
-		l.width = 0
-		return eof
+	// log.Println("next()")
+	// defer log.Printf("After next: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d, buf: %s\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf), l.buf)
+	//Rune already in buffer
+	if l.pos+1 <= l.lastpos {
+		// log.Printf("Rune already read: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d, buf: %s\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf), l.buf)
+		//rune already read
+		l.pos += 1
+		return l.buf[l.pos-1]
+
+	} else { // Rune not in buffer
+		r, s, err := l.rd.ReadRune()
+		if err != nil {
+			// log.Printf("error occurred: %s\n", err.Error())
+			r = eof
+			// if err == io.EOF {
+			// 	return eof
+			// } else {
+			// 	//TODO: Proper error handling
+			// 	return eof
+			// }
+		}
+		if s == 0 {
+			// log.Printf("No input read")
+			r = eof
+			// return eof //TODO: Better error handling
+		}
+		// log.Printf("Read rune from reader %c: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d\n", r, l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf))
+		if l.pos+1 <= len(l.buf) {
+			// log.Printf("Rune has space: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf))
+			//Use existing buffer space by overwriting
+
+			l.buf[l.pos] = r
+			l.pos += 1
+			l.lastpos = l.pos
+			return r
+		}
+		//Extend buffer
+		// log.Printf("Rune needs space, extend buffer: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf))
+		l.pos = l.pos + 1
+		l.lastpos = l.pos
+		l.buf = append(l.buf, r)
+		return r
 	}
-	//TODO: Possible error, use l.width = Pos(w)
-	// as seen in http://golang.org/src/pkg/text/template/parse/lex.go
-	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
-	l.pos += l.width
 	return r
 }
 
@@ -119,13 +185,22 @@ func (l *lexer) ignore() {
 }
 
 func (l *lexer) backup() {
-	l.pos -= l.width
+	if l.pos <= l.start {
+		panic("Can't backup before start") //TODO: Remove debug panic
+	}
+	// log.Printf("Backup before: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf))
+	l.pos -= 1
+	// log.Printf("Backup: start: %d, pos: %d, lastpos: %d, len(buf): %d, cap(buf): %d\n", l.start, l.pos, l.lastpos, len(l.buf), cap(l.buf))
 }
 
 func (l *lexer) peek() rune {
 	rune := l.next()
 	l.backup()
 	return rune
+}
+
+func (l *lexer) content() string {
+	return string(l.buf[l.start:l.pos])
 }
 
 //hasContent checks if lexed at least one character
@@ -199,7 +274,7 @@ func lexIdentifier(l *lexer) stateFn {
 		return l.errorf("Identifier does not start with an alpha character")
 	}
 	l.acceptRun(alphaLower + alphaUpper + digits)
-	if l.input[l.start:l.pos] == "class" {
+	if l.content() == "class" {
 		l.emit(itemClass)
 		return lexSpaceBeforeClassIdentifier
 	} else {
