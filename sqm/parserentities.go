@@ -39,3 +39,15 @@ func (p Property) String() string {
 func (c Class) String() string {
 	return fmt.Sprintf("class (name: %s), props: %s, arrprops: %s, classes: %s\n", c.Name, c.Props, c.Arrprops, c.Classes)
 }
+
+func (t PropType) String() string {
+	switch t {
+	case TString:
+		return "TString"
+	case TFloat:
+		return "TFloat"
+	case TInt:
+		return "TInt"
+	}
+	return "Unkown"
+}
