@@ -80,3 +80,28 @@ func TestEncodeIntel(t *testing.T) {
 		})
 	})
 }
+
+func TestEncodeMissionProps(t *testing.T) {
+	Convey("Given fresh mission properties", t, func() {
+		mission := &Mission{
+			Addons:     []string{"add1", "add2"},
+			AddonsAuto: []string{"add3", "add4"},
+			class: &sqm.Class{
+				Props: []*sqm.Property{
+					&sqm.Property{"randomSeed", sqm.TInt, "1749348"},
+				},
+			},
+		}
+		Convey("When encoding mission properties", func() {
+			class := &sqm.Class{}
+			encodeMissionProperties(mission, class)
+			Convey("Class properties should be set correctly", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"addOns", sqm.TString, []string{"add1", "add2"}})
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"addOnsAuto", sqm.TString, []string{"add3", "add4"}})
+			})
+			Convey("Missing properties should be taken from parent class", func() {
+				So(class.Props, ShouldContainProp, &sqm.Property{"randomSeed", sqm.TInt, "1749348"})
+			})
+		})
+	})
+}

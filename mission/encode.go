@@ -50,14 +50,23 @@ func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
 }
 
 func encodeMission(mission *Mission, class *sqm.Class) {
-	class.Arrprops = append(class.Arrprops, &sqm.ArrayProperty{"addOns", sqm.TString, mission.Addons})
-	class.Arrprops = append(class.Arrprops, &sqm.ArrayProperty{"addOnsAuto", sqm.TString, mission.AddonsAuto})
+	encodeMissionProperties(mission, class)
 	intelClass := &sqm.Class{
 		Name: "Intel",
 	}
 	encodeIntel(mission.Intel, intelClass)
 	class.Classes = append(class.Classes, intelClass)
 
+}
+
+func encodeMissionProperties(mission *Mission, class *sqm.Class) {
+	reg := make(map[string]bool)
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"addOns", sqm.TString, mission.Addons})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"addOnsAuto", sqm.TString, mission.AddonsAuto})
+	if mission.class != nil {
+		class.Props = addMissingProps(reg, class.Props, mission.class.Props)
+		class.Arrprops = addMissingArrProps(reg, class.Arrprops, mission.class.Arrprops)
+	}
 }
 
 func encodeIntel(i *Intel, class *sqm.Class) {
@@ -73,6 +82,7 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 
 	if i.class != nil {
 		class.Props = addMissingProps(reg, class.Props, i.class.Props)
+		class.Arrprops = addMissingArrProps(reg, class.Arrprops, i.class.Arrprops)
 	}
 
 }
@@ -84,6 +94,28 @@ func addMissingProps(register map[string]bool, existingProps []*sqm.Property, ad
 		}
 	}
 	return existingProps
+}
+
+func addMissingArrProps(register map[string]bool, existingProps []*sqm.ArrayProperty, additional []*sqm.ArrayProperty) []*sqm.ArrayProperty {
+	for _, p := range additional {
+		if !register[p.Name] {
+			existingProps = addArrProp(register, existingProps, p)
+		}
+	}
+	return existingProps
+}
+
+func addArrProp(register map[string]bool, props []*sqm.ArrayProperty, prop *sqm.ArrayProperty) []*sqm.ArrayProperty {
+	register[prop.Name] = true
+	return append(props, prop)
+}
+
+func addArrPropOmitEmpty(register map[string]bool, props []*sqm.ArrayProperty, prop *sqm.ArrayProperty) []*sqm.ArrayProperty {
+	register[prop.Name] = true
+	if len(prop.Values) != 0 {
+		return append(props, prop)
+	}
+	return props
 }
 
 func addProp(register map[string]bool, props []*sqm.Property, prop *sqm.Property) []*sqm.Property {
