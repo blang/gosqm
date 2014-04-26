@@ -10,6 +10,10 @@ type Parser struct {
 	wg *sync.WaitGroup
 }
 
+func NewParser() *Parser {
+	return &Parser{}
+}
+
 func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 	mf := &MissionFile{}
 	mf.class = class
