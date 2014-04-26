@@ -76,6 +76,12 @@ func encodeMission(mission *Mission, class *sqm.Class) {
 	encodeSensors(mission.Sensors, sensorsClass)
 	class.Classes = append(class.Classes, sensorsClass)
 
+	vehsClass := &sqm.Class{
+		Name: "Vehicles",
+	}
+	encodeVehicles(mission.Vehicles, vehsClass)
+	class.Classes = append(class.Classes, vehsClass)
+
 }
 
 func encodeMissionProperties(mission *Mission, class *sqm.Class) {
@@ -102,6 +108,31 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 	if i.class != nil {
 		class.Props = addMissingProps(reg, class.Props, i.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, i.class.Arrprops)
+	}
+}
+
+func encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(vehs))})
+	for i, v := range vehs {
+		vehClass := &sqm.Class{
+			Name: "Item" + strconv.Itoa(i),
+		}
+		encodeVehicle(v, vehClass)
+		class.Classes = append(class.Classes, vehClass)
+	}
+}
+
+func encodeVehicle(v *Vehicle, class *sqm.Class) {
+	reg := make(map[string]bool)
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, v.Position[:]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TFloat, v.Angle})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"skill", sqm.TFloat, v.Skill})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+	if v.class != nil {
+		class.Props = addMissingProps(reg, class.Props, v.class.Props)
+		class.Arrprops = addMissingArrProps(reg, class.Arrprops, v.class.Arrprops)
 	}
 }
 
