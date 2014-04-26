@@ -218,7 +218,7 @@ func TestParseMarkers(t *testing.T) {
 			parseMarker(markerClass, m)
 			Convey("All properties are correct", func() {
 				So(m.Name, ShouldEqual, "m1")
-				So(m.IsEllipse, ShouldBeTrue)
+				So(m.MarkerType, ShouldEqual, "ELLIPSE")
 				So(m.Type, ShouldEqual, "Empty")
 				So(m.ColorName, ShouldEqual, "ColorRed")
 				So(m.FillName, ShouldEqual, "Border")

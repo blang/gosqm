@@ -45,7 +45,7 @@ type Marker struct {
 	Position [3]string
 	// Angle      string //TODO: Angle?
 	Type       string
-	IsEllipse  bool
+	MarkerType string
 	Text       string
 	ColorName  string
 	FillName   string

@@ -212,7 +212,7 @@ func parseMarker(c *sqm.Class, marker *Marker) {
 		case "type":
 			marker.Type = prop.Value
 		case "markerType":
-			marker.IsEllipse = prop.Value == "ELLIPSE"
+			marker.MarkerType = prop.Value
 		case "colorName":
 			marker.ColorName = prop.Value
 		case "fillName":

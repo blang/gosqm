@@ -64,6 +64,12 @@ func encodeMission(mission *Mission, class *sqm.Class) {
 	encodeGroups(mission.Groups, groupsClass)
 	class.Classes = append(class.Classes, groupsClass)
 
+	markersClass := &sqm.Class{
+		Name: "Markers",
+	}
+	encodeMarkers(mission.Markers, markersClass)
+	class.Classes = append(class.Classes, markersClass)
+
 }
 
 func encodeMissionProperties(mission *Mission, class *sqm.Class) {
@@ -93,6 +99,39 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 	}
 }
 
+func encodeMarkers(markers []*Marker, class *sqm.Class) {
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(markers))})
+	for i, m := range markers {
+		markerClass := &sqm.Class{
+			Name: "Item" + strconv.Itoa(i),
+		}
+		encodeMarker(m, markerClass)
+		class.Classes = append(class.Classes, markerClass)
+	}
+}
+
+func encodeMarker(m *Marker, class *sqm.Class) {
+	reg := make(map[string]bool)
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, m.Position[:]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, m.Name})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"type", sqm.TString, m.Type})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"text", sqm.TString, m.Text})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"markerType", sqm.TString, m.MarkerType})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"colorName", sqm.TString, m.ColorName})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fillName", sqm.TString, m.FillName})
+	var drawBorder string
+	if m.DrawBorder {
+		drawBorder = "1"
+	}
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"drawBorder", sqm.TInt, drawBorder})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TFloat, m.Size[0]})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TFloat, m.Size[1]})
+	if m.class != nil {
+		class.Props = addMissingProps(reg, class.Props, m.class.Props)
+		class.Arrprops = addMissingArrProps(reg, class.Arrprops, m.class.Arrprops)
+	}
+
+}
 func encodeGroups(groups []*Group, class *sqm.Class) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(groups))})
 	for i, g := range groups {

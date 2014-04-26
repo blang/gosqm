@@ -173,3 +173,43 @@ func TestEncodeWaypoint(t *testing.T) {
 		})
 	})
 }
+
+func TestEncodeMarker(t *testing.T) {
+	Convey("Given fresh marker", t, func() {
+		m := &Marker{
+			Name:       "marker",
+			Position:   [3]string{"1.0", "2.0", "3.0"},
+			Type:       "Empty",
+			MarkerType: "ELLIPSE",
+			Text:       "text",
+			ColorName:  "ColorRed",
+			FillName:   "Border",
+			DrawBorder: true,
+			Size:       [2]string{"100", "200"},
+			class: &sqm.Class{
+				Props: []*sqm.Property{
+					&sqm.Property{"missing", sqm.TString, "missing"},
+				},
+			},
+		}
+		Convey("When encoding marker", func() {
+			class := &sqm.Class{}
+			encodeMarker(m, class)
+			Convey("Class properties should be set correctly", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "marker"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "Empty"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"markerType", sqm.TString, "ELLIPSE"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "text"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"colorName", sqm.TString, "ColorRed"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"fillName", sqm.TString, "Border"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"drawBorder", sqm.TInt, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"a", sqm.TFloat, "100"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"b", sqm.TFloat, "200"})
+			})
+			Convey("Missing properties should be taken from parent class", func() {
+				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
+			})
+		})
+	})
+}
