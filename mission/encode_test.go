@@ -213,3 +213,53 @@ func TestEncodeMarker(t *testing.T) {
 		})
 	})
 }
+
+func TestEncodeSensor(t *testing.T) {
+	Convey("Given a fresh sensor", t, func() {
+		s := &Sensor{
+			Name:            "sensor",
+			Position:        [3]string{"1.0", "2.0", "3.0"},
+			Size:            [2]string{"100", "200"},
+			Angle:           "12.3",
+			IsRectangle:     true,
+			ActivationBy:    "ANY",
+			IsRepeating:     true,
+			Age:             "UNKNOWN",
+			Condition:       "isServer",
+			OnActivation:    "hint test",
+			IsInterruptible: true,
+			class: &sqm.Class{
+				Props: []*sqm.Property{
+					&sqm.Property{"missing", sqm.TString, "missing"},
+				},
+			},
+			classEffects: &sqm.Class{
+				Name: "Effects",
+			},
+		}
+		Convey("When encoding sensor", func() {
+			class := &sqm.Class{}
+			encodeSensor(s, class)
+			Convey("Class properties should be set correctly", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "sensor"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"a", sqm.TFloat, "100"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"b", sqm.TFloat, "200"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"angle", sqm.TFloat, "12.3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"rectangular", sqm.TInt, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"activationBy", sqm.TString, "ANY"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"repeating", sqm.TInt, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"age", sqm.TString, "UNKNOWN"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"expCond", sqm.TString, "isServer"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"expActiv", sqm.TString, "hint test"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"interruptable", sqm.TInt, "1"})
+			})
+			Convey("Missing properties should be taken from parent class", func() {
+				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
+			})
+			Convey("Effects class should be set", func() {
+				So(len(class.Classes), ShouldEqual, 1)
+			})
+		})
+	})
+}
