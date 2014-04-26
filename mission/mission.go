@@ -92,7 +92,7 @@ type Mission struct {
 }
 
 type Intel struct {
-	ResistanceWest  string
+	ResistanceWest  bool
 	StartWeather    string
 	ForecastWeather string
 	Year            string

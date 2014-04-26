@@ -31,7 +31,7 @@ func TestParseIntel(t *testing.T) {
 		intelclass := &sqm.Class{
 			Name: "Intel",
 			Props: []*sqm.Property{
-				&sqm.Property{"resistanceWest", sqm.TInt, "0"},
+				&sqm.Property{"resistanceWest", sqm.TInt, "1"},
 				&sqm.Property{"startWeather", sqm.TFloat, "0.3"},
 				&sqm.Property{"forecastWeather", sqm.TFloat, "0.8"},
 				&sqm.Property{"year", sqm.TInt, "2009"},
@@ -46,7 +46,7 @@ func TestParseIntel(t *testing.T) {
 			parseIntel(intelclass, mission)
 			i := mission.Intel
 			Convey("All properties are correct", func() {
-				So(i.ResistanceWest, ShouldEqual, "0")
+				So(i.ResistanceWest, ShouldBeTrue)
 				So(i.StartWeather, ShouldEqual, "0.3")
 				So(i.ForecastWeather, ShouldEqual, "0.8")
 				So(i.Year, ShouldEqual, "2009")

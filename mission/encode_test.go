@@ -43,10 +43,21 @@ func ShouldContainProp(actual interface{}, expected ...interface{}) string {
 	return "Invalid type"
 }
 
+func ShouldContainClassWithName(actual interface{}, expected ...interface{}) string {
+	classes := actual.([]*sqm.Class)
+	classname := expected[0].(string)
+	for _, c := range classes {
+		if c.Name == classname {
+			return ""
+		}
+	}
+	return fmt.Sprintf("Class with name %s not found", classname)
+}
+
 func TestEncodeIntel(t *testing.T) {
 	Convey("Given a fresh intel", t, func() {
 		intel := &Intel{
-			ResistanceWest:  "0",
+			ResistanceWest:  false,
 			StartWeather:    "0.3",
 			ForecastWeather: "0.8",
 			Year:            "2009",
@@ -295,5 +306,85 @@ func TestEncodeVehicle(t *testing.T) {
 			})
 		})
 
+	})
+}
+
+func TestEncodeMission(t *testing.T) {
+	Convey("Given a fresh mission", t, func() {
+		m := &Mission{
+			Addons:     []string{"add1", "add2"},
+			AddonsAuto: []string{"add3", "add4"},
+			Intel: &Intel{
+				ResistanceWest:  false,
+				StartWeather:    "0.2",
+				ForecastWeather: "0.3",
+				Year:            "2009",
+				Month:           "10",
+				Day:             "5",
+				Hour:            "10",
+				Minute:          "3",
+			},
+			Groups: []*Group{
+				&Group{
+					Side: "WEST",
+					Units: []*Unit{
+						&Unit{
+							Name:     "unit",
+							Position: [3]string{"1.0", "2.0", "3.0"},
+						},
+					},
+					Waypoints: []*Waypoint{
+						&Waypoint{
+							Position: [3]string{"1.0", "2.0", "3.0"},
+							Type:     "AND",
+						},
+					},
+				},
+			},
+			Vehicles: []*Vehicle{
+				&Vehicle{
+					Name:      "veh",
+					Position:  [3]string{"1.0", "2.0", "3.0"},
+					Classname: "classname",
+				},
+			},
+			Markers: []*Marker{
+				&Marker{
+					Name:     "marker",
+					Position: [3]string{"1.0", "2.0", "3.0"},
+					Type:     "empty",
+				},
+			},
+			Sensors: []*Sensor{
+				&Sensor{
+					Name:     "sensor",
+					Position: [3]string{"1.0", "2.0", "3.0"},
+					Size:     [2]string{"100", "200"},
+				},
+			},
+		}
+		Convey("When encoding mission", func() {
+			class := &sqm.Class{}
+			encodeMission(m, class)
+			Convey("Intel was set", func() {
+				So(class.Classes, ShouldContainClassWithName, "Intel")
+			})
+			Convey("Addons properties was set", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"addOns", sqm.TString, []string{"add1", "add2"}})
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"addOnsAuto", sqm.TString, []string{"add3", "add4"}})
+			})
+			Convey("Groups was set", func() {
+				So(class.Classes, ShouldContainClassWithName, "Groups")
+			})
+			Convey("Vehicles was set", func() {
+				So(class.Classes, ShouldContainClassWithName, "Vehicles")
+			})
+			Convey("Markers was set", func() {
+				So(class.Classes, ShouldContainClassWithName, "Markers")
+			})
+			Convey("Sensors was set", func() {
+				So(class.Classes, ShouldContainClassWithName, "Sensors")
+			})
+		})
 	})
 }

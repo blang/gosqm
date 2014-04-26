@@ -96,7 +96,13 @@ func encodeMissionProperties(mission *Mission, class *sqm.Class) {
 
 func encodeIntel(i *Intel, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"resistanceWest", sqm.TInt, i.ResistanceWest})
+	var resistanceWest string
+	if i.ResistanceWest {
+		resistanceWest = "1"
+	} else {
+		resistanceWest = "0"
+	}
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"resistanceWest", sqm.TInt, resistanceWest})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"startWeather", sqm.TFloat, i.StartWeather})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"forecastWeather", sqm.TFloat, i.ForecastWeather})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"year", sqm.TInt, i.Year})

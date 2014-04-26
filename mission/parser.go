@@ -82,7 +82,7 @@ func parseIntel(class *sqm.Class, mission *Mission) {
 	for _, prop := range class.Props {
 		switch prop.Name {
 		case "resistanceWest":
-			intel.ResistanceWest = prop.Value
+			intel.ResistanceWest = prop.Value == "1"
 		case "startWeather":
 			intel.StartWeather = prop.Value
 		case "forecastWeather":
