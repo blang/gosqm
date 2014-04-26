@@ -3,18 +3,24 @@ package mission
 import (
 	"github.com/blang/gosqm/sqm"
 	"strconv"
+	"sync"
 )
 
 type Encoder struct {
+	wg *sync.WaitGroup
 }
 
 func NewEncoder() *Encoder {
-	e := &Encoder{}
+	e := &Encoder{
+		wg: &sync.WaitGroup{},
+	}
 	return e
 }
 
 func (e *Encoder) Encode(missionFile *MissionFile) *sqm.Class {
-	return e.encodeMissionFile(missionFile)
+	c := e.encodeMissionFile(missionFile)
+	e.wg.Wait()
+	return c
 }
 
 func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
@@ -26,60 +32,96 @@ func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
 	missionClass := &sqm.Class{
 		Name: "Mission",
 	}
-	encodeMission(missionFile.Mission, missionClass)
-	mainClass.Classes = append(mainClass.Classes, missionClass)
-
+	e.wg.Add(1)
+	go func() {
+		e.encodeMission(missionFile.Mission, missionClass)
+		mainClass.Classes = append(mainClass.Classes, missionClass)
+		e.wg.Done()
+	}()
 	introClass := &sqm.Class{
 		Name: "Intro",
 	}
-	encodeMission(missionFile.Intro, introClass)
+	e.wg.Add(1)
+	go func() {
+		e.encodeMission(missionFile.Intro, introClass)
+		e.wg.Done()
+	}()
+
 	mainClass.Classes = append(mainClass.Classes, introClass)
 
 	outroWinClass := &sqm.Class{
 		Name: "OutroWin",
 	}
-	encodeMission(missionFile.OutroWin, outroWinClass)
+	e.wg.Add(1)
+	go func() {
+		e.encodeMission(missionFile.OutroWin, outroWinClass)
+		e.wg.Done()
+	}()
 	mainClass.Classes = append(mainClass.Classes, outroWinClass)
 
 	outroLooseClass := &sqm.Class{
 		Name: "OutroLoose",
 	}
-	encodeMission(missionFile.OutroLoose, outroLooseClass)
+	e.wg.Add(1)
+	go func() {
+		e.encodeMission(missionFile.OutroLoose, outroLooseClass)
+		e.wg.Done()
+	}()
 	mainClass.Classes = append(mainClass.Classes, outroLooseClass)
 
 	return mainClass
 }
 
-func encodeMission(mission *Mission, class *sqm.Class) {
+func (e *Encoder) encodeMission(mission *Mission, class *sqm.Class) {
 	encodeMissionProperties(mission, class)
 	intelClass := &sqm.Class{
 		Name: "Intel",
 	}
-	encodeIntel(mission.Intel, intelClass)
+	e.wg.Add(1)
+	go func() {
+		encodeIntel(mission.Intel, intelClass)
+		e.wg.Done()
+	}()
 	class.Classes = append(class.Classes, intelClass)
 
 	groupsClass := &sqm.Class{
 		Name: "Groups",
 	}
-	encodeGroups(mission.Groups, groupsClass)
+	e.wg.Add(1)
+	go func() {
+		e.encodeGroups(mission.Groups, groupsClass)
+		e.wg.Done()
+	}()
 	class.Classes = append(class.Classes, groupsClass)
 
 	markersClass := &sqm.Class{
 		Name: "Markers",
 	}
-	encodeMarkers(mission.Markers, markersClass)
+	e.wg.Add(1)
+	go func() {
+		encodeMarkers(mission.Markers, markersClass)
+		e.wg.Done()
+	}()
 	class.Classes = append(class.Classes, markersClass)
 
 	sensorsClass := &sqm.Class{
 		Name: "Sensors",
 	}
-	encodeSensors(mission.Sensors, sensorsClass)
+	e.wg.Add(1)
+	go func() {
+		encodeSensors(mission.Sensors, sensorsClass)
+		e.wg.Done()
+	}()
 	class.Classes = append(class.Classes, sensorsClass)
 
 	vehsClass := &sqm.Class{
 		Name: "Vehicles",
 	}
-	encodeVehicles(mission.Vehicles, vehsClass)
+	e.wg.Add(1)
+	go func() {
+		e.encodeVehicles(mission.Vehicles, vehsClass)
+		e.wg.Done()
+	}()
 	class.Classes = append(class.Classes, vehsClass)
 
 }
@@ -117,13 +159,17 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 	}
 }
 
-func encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
+func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(vehs))})
 	for i, v := range vehs {
 		vehClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
-		encodeVehicle(v, vehClass)
+		e.wg.Add(1)
+		go func(v *Vehicle, vehClass *sqm.Class) {
+			encodeVehicle(v, vehClass)
+			e.wg.Done()
+		}(v, vehClass)
 		class.Classes = append(class.Classes, vehClass)
 	}
 }
@@ -215,18 +261,23 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 	}
 
 }
-func encodeGroups(groups []*Group, class *sqm.Class) {
+func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(groups))})
 	for i, g := range groups {
 		groupClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
-		encodeGroup(g, groupClass)
+		e.wg.Add(1)
+		go func(g *Group, groupClass *sqm.Class) {
+			e.encodeGroup(g, groupClass)
+			e.wg.Done()
+		}(g, groupClass)
+
 		class.Classes = append(class.Classes, groupClass)
 	}
 }
 
-func encodeGroup(g *Group, class *sqm.Class) {
+func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, g.Side})
 	if len(g.Units) > 0 {
@@ -234,7 +285,11 @@ func encodeGroup(g *Group, class *sqm.Class) {
 			Name: "Vehicles",
 		}
 		groupMemberClass.Props = append(groupMemberClass.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(g.Units))})
-		encodeGroupMembers(g.Units, groupMemberClass)
+		e.wg.Add(1)
+		go func(g *Group, groupMemberClass *sqm.Class) {
+			e.encodeGroupMembers(g.Units, groupMemberClass)
+			e.wg.Done()
+		}(g, groupMemberClass)
 		class.Classes = append(class.Classes, groupMemberClass)
 	}
 
@@ -243,7 +298,11 @@ func encodeGroup(g *Group, class *sqm.Class) {
 			Name: "Waypoints",
 		}
 		waypointsClass.Props = append(waypointsClass.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(g.Waypoints))})
-		encodeWaypoints(g.Waypoints, waypointsClass)
+		e.wg.Add(1)
+		go func(g *Group, waypointsClass *sqm.Class) {
+			encodeWaypoints(g.Waypoints, waypointsClass)
+			e.wg.Done()
+		}(g, waypointsClass)
 		class.Classes = append(class.Classes, waypointsClass)
 	}
 
@@ -253,12 +312,17 @@ func encodeGroup(g *Group, class *sqm.Class) {
 	}
 }
 
-func encodeGroupMembers(units []*Unit, class *sqm.Class) {
+func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class) {
 	for i, unit := range units {
 		unitclass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
-		encodeUnit(unit, unitclass)
+		e.wg.Add(1)
+		go func(unit *Unit, unitclass *sqm.Class) {
+			encodeUnit(unit, unitclass)
+			e.wg.Done()
+		}(unit, unitclass)
+
 		class.Classes = append(class.Classes, unitclass)
 	}
 }

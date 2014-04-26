@@ -365,7 +365,8 @@ func TestEncodeMission(t *testing.T) {
 		}
 		Convey("When encoding mission", func() {
 			class := &sqm.Class{}
-			encodeMission(m, class)
+			e := NewEncoder()
+			e.encodeMission(m, class)
 			Convey("Intel was set", func() {
 				So(class.Classes, ShouldContainClassWithName, "Intel")
 			})
