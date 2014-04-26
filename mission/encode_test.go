@@ -105,3 +105,71 @@ func TestEncodeMissionProps(t *testing.T) {
 		})
 	})
 }
+
+func TestEncodeUnit(t *testing.T) {
+	Convey("Given fresh unit", t, func() {
+		unit := &Unit{
+			Name:      "name",
+			Position:  [3]string{"1.0", "2.0", "3.0"},
+			Direction: "0.3",
+			Classname: "classname",
+			Skill:     "0.1",
+			Formation: "FORM",
+			IsLeader:  true,
+			class: &sqm.Class{
+				Props: []*sqm.Property{
+					&sqm.Property{"init", sqm.TString, "init"},
+				},
+			},
+		}
+		Convey("When encoding unit", func() {
+			class := &sqm.Class{}
+			encodeUnit(unit, class)
+			Convey("Class properties should be set correctly", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "name"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"azimut", sqm.TFloat, "0.3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"skill", sqm.TFloat, "0.1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"special", sqm.TString, "FORM"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"leader", sqm.TInt, "1"})
+			})
+			Convey("Missing properties should be taken from parent class", func() {
+				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "init"})
+			})
+		})
+	})
+}
+
+func TestEncodeWaypoint(t *testing.T) {
+	Convey("Given fresh waypoint", t, func() {
+		wp := &Waypoint{
+			Type:     "AND",
+			Position: [3]string{"1.0", "2.0", "3.0"},
+			ShowWP:   "NEVER",
+			class: &sqm.Class{
+				Props: []*sqm.Property{
+					&sqm.Property{"missing", sqm.TString, "missing"},
+				},
+			},
+			classEffects: &sqm.Class{
+				Name: "Effects",
+			},
+		}
+		Convey("When encoding waypoint", func() {
+			class := &sqm.Class{}
+			encodeWaypoint(wp, class)
+			Convey("Class properties should be set correctly", func() {
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"showWP", sqm.TString, "NEVER"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "AND"})
+			})
+			Convey("Missing properties should be taken from parent class", func() {
+				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
+			})
+			Convey("Effects class was set", func() {
+				So(len(class.Classes), ShouldBeGreaterThan, 0)
+			})
+		})
+	})
+}
