@@ -35,10 +35,17 @@ func main() {
 
 func printTreePart(class *sqm.Class, level int) {
 	classname, side := parseVehicle(class)
-	if classname != "" {
-		fmt.Printf("%s%s: %s %s %d\n", indent(level), class.Name, classname, side, countAttributes(class))
+	id, found := parseId(class)
+	var name string
+	if found {
+		name = class.Name + " (" + id + ")"
 	} else {
-		fmt.Printf("%s%s: %d\n", indent(level), class.Name, countAttributes(class))
+		name = class.Name
+	}
+	if classname != "" {
+		fmt.Printf("%s%s: %s %s %d\n", indent(level), name, classname, side, countAttributes(class))
+	} else {
+		fmt.Printf("%s%s: %d\n", indent(level), name, countAttributes(class))
 	}
 	for _, subclass := range class.Classes {
 		printTreePart(subclass, level+1)
@@ -63,6 +70,16 @@ func parseVehicle(class *sqm.Class) (classname string, side string) {
 		}
 	}
 	return
+}
+
+func parseId(class *sqm.Class) (string, bool) {
+	for _, prop := range class.Props {
+		switch prop.Name {
+		case "id":
+			return prop.Value, true
+		}
+	}
+	return "", false
 }
 
 func indent(level int) string {
