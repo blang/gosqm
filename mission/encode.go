@@ -35,9 +35,9 @@ func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
 	e.wg.Add(1)
 	go func() {
 		e.encodeMission(missionFile.Mission, missionClass)
-		mainClass.Classes = append(mainClass.Classes, missionClass)
 		e.wg.Done()
 	}()
+	mainClass.Classes = append(mainClass.Classes, missionClass)
 	introClass := &sqm.Class{
 		Name: "Intro",
 	}
