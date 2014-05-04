@@ -82,10 +82,14 @@ func (ep *parserError) String() string {
 	return ep.s
 }
 
+func (ep *parserError) Error() string {
+	return ep.s
+}
+
 //TODO: Make better parser errors by using parserError fields
 func (p *Parser) makeParserError(s string) *parserError {
 	col, line := p.lexer.Position(p.buff.curr())
-	err := fmt.Sprintf("Input:%d:%d: %s", col, line, s)
+	err := fmt.Sprintf("Input:%d:%d: %s, read: %q", line, col, s, p.buff.curr())
 	return &parserError{s: err}
 }
 
@@ -360,7 +364,7 @@ func parseInsideClass(p *Parser) (pstateFn, *parserError) {
 	return parseInsideClass, nil
 }
 
-func (p *Parser) Run() (*Class, *parserError) {
+func (p *Parser) Run() (*Class, error) {
 	l := p.lexer
 	go l.run()
 	var err *parserError
@@ -368,7 +372,7 @@ func (p *Parser) Run() (*Class, *parserError) {
 	for state := pstartState; state != nil; {
 		state, err = state(p)
 		if err != nil {
-			fmt.Printf("Error: %s\n", err)
+			return nil, err
 			break
 		}
 	}

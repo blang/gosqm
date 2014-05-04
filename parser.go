@@ -15,6 +15,9 @@ func NewParser() *Parser {
 }
 
 func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
+	if class == nil {
+		return nil, fmt.Errorf("Class was nil")
+	}
 	mf := &MissionFile{}
 	mf.class = class
 

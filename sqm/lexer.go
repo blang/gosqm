@@ -102,7 +102,11 @@ func (l *lexer) run() {
 
 // Emits an item
 func (l *lexer) emit(t itemType) {
-	l.items <- item{t, l.start, l.input[l.start:l.pos]}
+	l.items <- item{
+		typ: t,
+		pos: l.start,
+		val: l.input[l.start:l.pos],
+	}
 	l.start = l.pos
 }
 

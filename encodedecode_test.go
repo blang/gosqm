@@ -148,19 +148,21 @@ func TestFullEncodeDecode(t *testing.T) {
 	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
-		t.Errorf("Could not open mission.sqm")
+		t.Fatalf("Could not open mission.sqm")
 		return
 	}
 	p := sqm.MakeParser(bufstr)
 	// c, perr := p.Run()
 	class, perr := p.Run()
 	if perr != nil {
-		t.Errorf("Parser returned with error %q", perr)
+		t.Fatalf("Parser returned with error %q", perr)
+		return
 	}
 	mp := NewParser()
 	missionFile, err := mp.Parse(class)
 	if err != nil {
-		t.Errorf("Can't parse class to missionfile, %q", err)
+		t.Fatalf("Can't parse class to missionfile, %q", err)
+		return
 	}
 	enc := NewEncoder()
 	eclass := enc.Encode(missionFile)
@@ -169,6 +171,8 @@ func TestFullEncodeDecode(t *testing.T) {
 	sqmenc := sqm.NewEncoder(buffer)
 	err = sqmenc.Encode(eclass)
 	if err != nil {
-		t.Errorf("Can't encode class, %q", err)
+		t.Fatalf("Can't encode class, %q", err)
+		return
 	}
+	ioutil.WriteFile("mission.out.sqm", buffer.Bytes(), 0666)
 }

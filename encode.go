@@ -145,13 +145,13 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 		resistanceWest = "0"
 	}
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"resistanceWest", sqm.TInt, resistanceWest})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"startWeather", sqm.TFloat, i.StartWeather})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"forecastWeather", sqm.TFloat, i.ForecastWeather})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"year", sqm.TInt, i.Year})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"month", sqm.TInt, i.Month})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"day", sqm.TInt, i.Day})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"hour", sqm.TInt, i.Hour})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"minute", sqm.TInt, i.Minute})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"startWeather", sqm.TFloat, i.StartWeather})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"forecastWeather", sqm.TFloat, i.ForecastWeather})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"year", sqm.TInt, i.Year})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"month", sqm.TInt, i.Month})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"day", sqm.TInt, i.Day})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"hour", sqm.TInt, i.Hour})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"minute", sqm.TInt, i.Minute})
 
 	if i.class != nil {
 		class.Props = addMissingProps(reg, class.Props, i.class.Props)

@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-const LINEBREAK = "\n\r"
+const LINEBREAK = "\r\n"
 const INDENT = 2
 
 type Encoder struct {
@@ -165,12 +165,35 @@ func (e *Encoder) encodeNormalArrProperty(arrProp *ArrayProperty, level int) err
 	return nil
 }
 
+const indentCacheMax = 50
+
+var indentCache [indentCacheMax]*string
+
 func indent(level int) string {
-	var buffer bytes.Buffer
+	switch {
+	case level == 0:
+		return ""
+	case level <= 50:
+		if indentCache[level-1] == nil {
+			var buffer bytes.Buffer
 
-	for i := 0; i < level*INDENT; i++ {
-		buffer.WriteString(" ")
+			for i := 0; i < level*INDENT; i++ {
+				buffer.WriteString(" ")
+			}
+			str := buffer.String()
+			indentCache[level-1] = &str
+			return str
+		} else {
+			return *(indentCache[level-1])
+		}
+
+	case level > 50:
+		var buffer bytes.Buffer
+
+		for i := 0; i < level*INDENT; i++ {
+			buffer.WriteString(" ")
+		}
+		return buffer.String()
 	}
-
-	return buffer.String()
+	return "" //Invalid level input
 }
