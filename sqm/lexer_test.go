@@ -1,17 +1,9 @@
 package sqm
 
 import (
-	"fmt"
 	"io/ioutil"
 	"testing"
 )
-
-func ExampleItemString() {
-	var i item = item{typ: itemEqual, val: "="}
-	fmt.Println(i)
-	// Output:
-	// type: 6 val: "="
-}
 
 func TestLexerNext(t *testing.T) {
 	const name, input = "lexer", "a"
