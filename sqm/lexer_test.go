@@ -6,31 +6,11 @@ import (
 	"testing"
 )
 
-// func TestItemType(t *testing.T) {
-// 	var x itemType = itemError
-// 	var y itemType = itemDot
-// 	if x == y {
-// 		t.Errorf("Both types are the same")
-// 	}
-// }
-
 func ExampleItemString() {
 	var i item = item{typ: itemEqual, val: "="}
 	fmt.Println(i)
 	// Output:
 	// type: 6 val: "="
-}
-
-func TestMakeLexer(t *testing.T) {
-	const name, input = "lexer", "input"
-	l := makeLexer(name, input)
-	if l.input != input {
-		t.Errorf("Lexer input should be %q but was %q", input, l.input)
-	}
-
-	if l.items == nil {
-		t.Errorf("Lexer returned invalid channel")
-	}
 }
 
 func TestLexerNext(t *testing.T) {
@@ -198,41 +178,68 @@ func TestLexerAcceptRunFail(t *testing.T) {
 	}
 }
 
-// func TestLexNumberInt(t *testing.T) {
-// 	const name, input, value = "lexer", "123", "123"
-// 	const typ itemType = itemInt
+func TestItemPositionFirstLine(t *testing.T) {
+	l := makeLexer("test", "abc\ndef")
+	item := &item{
+		typ: itemIdentifier,
+		pos: Pos(2),
+		val: "c",
+	}
+	col, line := l.Position(item)
+	if col != 2 {
+		t.Errorf("Col wrong %d", col)
+	}
+	if line != 1 {
+		t.Errorf("Line wrong %d", line)
+	}
+}
 
-// 	l := makeLexer(name, input)
-// 	go l.run()
-// 	item := <-l.items
-// 	if item.typ != typ {
-// 		t.Errorf("Item type expected %q but was %q", typ, item.typ)
-// 	}
-// 	if item.val != value {
-// 		t.Errorf("Item value expected %q but was %q", value, item.val)
-// 	}
-// 	if isClosed := <-l.items; isClosed.typ != itemEOF {
-// 		t.Errorf("Channel was not closed, further input pending?")
-// 	}
-// }
+func TestItemPositionSecondLine(t *testing.T) {
+	l := makeLexer("test", "abc\ndef")
+	item := &item{
+		typ: itemIdentifier,
+		pos: Pos(4),
+		val: "d",
+	}
+	col, line := l.Position(item)
+	if col != 0 {
+		t.Errorf("Col wrong %d", col)
+	}
+	if line != 2 {
+		t.Errorf("Line wrong %d", line)
+	}
+}
 
-// func TestLexNumberFloat(t *testing.T) {
-// 	const name, input, value = "lexer", "123.456", "123.456"
-// 	const typ itemType = itemFloat
+func TestMissionSQM(t *testing.T) {
+	const name = "Mission.sqm parser"
+	if testing.Short() {
+		t.Skip("Skip mission.sqm in short mode")
+		return
+	}
+	buf, err := ioutil.ReadFile("../testdata/mission.sqm")
+	if err != nil {
+		t.Errorf("Could not open mission.sqm")
+		return
+	}
+	input := string(buf)
+	l := makeLexer(name, input)
 
-// 	l := makeLexer(name, input)
-// 	go l.run()
-// 	item := <-l.items
-// 	if item.typ != typ {
-// 		t.Errorf("Item type expected %q but was %q", typ, item.typ)
-// 	}
-// 	if item.val != value {
-// 		t.Errorf("Item value expected %q but was %q", value, item.val)
-// 	}
-// 	if isClosed := <-l.items; isClosed.typ != itemEOF {
-// 		t.Errorf("Channel was not closed, further input pending?")
-// 	}
-// }
+	go l.run()
+	i := 0
+	for {
+		item := l.nextItem()
+		i++
+		if item.typ == itemEOF {
+			t.Logf("Successfully imported %d items from file", i)
+			return
+		} else if item.typ == itemError {
+			t.Errorf("Got error %q", item)
+			return
+		}
+	}
+}
+
+// Table driven tests:
 
 type lexTest struct {
 	name  string
@@ -434,40 +441,11 @@ var lexTests = []lexTest{
 	}},
 }
 
-func TestLexer(t *testing.T) {
+func TestLexerTable(t *testing.T) {
 	for _, test := range lexTests {
 		items := collect(&test)
 		if !equals(test.items, items, false) {
 			t.Errorf("%s: got\n\t%+v\nexpected\n\t%v", test.name, items, test.items)
-		}
-	}
-}
-
-func TestMissionSQM(t *testing.T) {
-	const name = "Mission.sqm parser"
-	if testing.Short() {
-		t.Skip("Skip mission.sqm in short mode")
-		return
-	}
-	buf, err := ioutil.ReadFile("../testdata/mission.sqm")
-	if err != nil {
-		t.Errorf("Could not open mission.sqm")
-		return
-	}
-	input := string(buf)
-	l := makeLexer(name, input)
-
-	go l.run()
-	i := 0
-	for {
-		item := l.nextItem()
-		i++
-		if item.typ == itemEOF {
-			t.Logf("Successfully imported %d items from file", i)
-			return
-		} else if item.typ == itemError {
-			t.Errorf("Got error %q", item)
-			return
 		}
 	}
 }

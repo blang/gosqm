@@ -6,36 +6,59 @@ import (
 	"unicode/utf8"
 )
 
+// Pos represents a byte position in the input text.
+type Pos uint
+
+func (p Pos) Position() Pos {
+	return p
+}
+
+// Positions gets item position in lexer string as column and line.
+func (l *lexer) Position(item *item) (col int, line int) {
+	text := l.input[:item.pos]
+	byteNum := strings.LastIndex(text, "\n")
+	startLastLine := 0
+	if byteNum == -1 {
+		startLastLine = 0
+		//col = pos // On first line.
+	} else {
+		byteNum++ // After the newline.
+		startLastLine = byteNum
+		//col = pos - byteNum
+	}
+	col = utf8.RuneCountInString(text[startLastLine:])
+	line = 1 + strings.Count(text, "\n")
+	return
+}
+
 const eof rune = -1
 
 type itemType int
 
 const (
-	itemEOF itemType = iota //make it the null type for closed channels
-	itemError
-	itemInt
-	itemFloat
-	itemIdentifier
-	itemIdentifierArrayDec //[]
-	itemEqual              // =
-	itemSemicolon
-	itemSpace          //also newlines
-	itemOpenBlock      //{
-	itemCloseBlock     //};
-	itemOpenArray      //{
-	itemCloseArray     //}
-	itemClass          //class
-	itemArraySeperator //,
-	itemStringDelim    //"
-	itemString
+	itemError              itemType = iota // Error occurred. Message in val
+	itemEOF                                // EOF if all input is read
+	itemInt                                // Number without float point seperator
+	itemFloat                              // Float with point seperator
+	itemIdentifier                         // Identifier includes classnames and property names
+	itemIdentifierArrayDec                 // [] Array declaration
+	itemEqual                              // =
+	itemSemicolon                          // ; seperates logical blocks
+	itemSpace                              // also newlines, tabs merged into one itemSpace
+	itemOpenBlock                          // {
+	itemCloseBlock                         // };
+	itemOpenArray                          // {
+	itemCloseArray                         // }
+	itemClass                              // class
+	itemArraySeperator                     // ,
+	itemStringDelim                        // "
+	itemString                             // String
 )
 
-//TODO: item might need position information for later debugging
 type item struct {
-	typ itemType
-	pos int //starting position in bytes in the input string
-	// TODO: Should be character instead of byte?
-	val string
+	typ itemType // Type of this item.
+	pos Pos      // Starting position in bytes in the input string.
+	val string   // Value of this item.
 }
 
 func (i item) String() string {
@@ -50,20 +73,16 @@ type stateFn func(*lexer) stateFn
 type lexer struct {
 	name  string    //used for errors
 	input string    //string being scanned
-	start int       // start position of the item
-	pos   int       // current position in the input
-	width int       // width of last rune read
+	start Pos       // start position of the item
+	pos   Pos       // current position in the input
+	width Pos       // width of last rune read
 	items chan item // channel of scanned items
 }
 
-// var startState stateFn = func(l *lexer) stateFn {
-// 	return func(l2 *lexer) stateFn {
-// 		return nil
-// 	}
-// }
-
+// Starting state of state machine
 var startState stateFn = lexInsideClass
 
+// Initializes a lexer
 func makeLexer(name, input string) *lexer {
 	l := &lexer{
 		name:  name,
@@ -73,11 +92,6 @@ func makeLexer(name, input string) *lexer {
 	return l
 }
 
-// func (l *lexer) lex() (*lexer, chan item) {
-// 	go l.run()
-// 	return l, l.items
-// }
-
 // Run the lexer as a state machine until state is nil
 func (l *lexer) run() {
 	for state := startState; state != nil; {
@@ -86,19 +100,22 @@ func (l *lexer) run() {
 	close(l.items) //TODO: close 'emits' null type, maybe unwanted
 }
 
+// Emits an item
 func (l *lexer) emit(t itemType) {
 	l.items <- item{t, l.start, l.input[l.start:l.pos]}
 	l.start = l.pos
 }
 
-func (l *lexer) next() (r rune) {
-	if l.pos >= len(l.input) {
+// Next rune
+func (l *lexer) next() rune {
+	if int(l.pos) >= len(l.input) {
 		l.width = 0
 		return eof
 	}
 	//TODO: Possible error, use l.width = Pos(w)
 	// as seen in http://golang.org/src/pkg/text/template/parse/lex.go
-	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
+	r, w := utf8.DecodeRuneInString(l.input[l.pos:])
+	l.width = Pos(w)
 	l.pos += l.width
 	return r
 }
@@ -169,7 +186,7 @@ func isAlpha(r rune) bool {
 	return (strings.IndexRune(alphaLower+alphaUpper, r) >= 0)
 }
 
-const space = " \n\r"
+const space = " \n\r\t"
 
 func isSpace(r rune) bool {
 	return (strings.IndexRune(space, r) >= 0)
