@@ -86,9 +86,7 @@ func (e *Encoder) encodeProperty(p *Property, level int) error {
 	switch p.Typ {
 	case TString:
 		err = e.writeString(indent(level) + p.Name + "=\"" + p.Value + "\";" + LINEBREAK)
-	case TInt:
-		fallthrough
-	case TFloat:
+	case TNumber:
 		err = e.writeString(indent(level) + p.Name + "=" + p.Value + ";" + LINEBREAK)
 	}
 	if err != nil {

@@ -13,7 +13,7 @@ func TestStructure(t *testing.T) {
 	if len(class.Props) > 0 {
 		t.Errorf("Props length is %d", len(class.Props))
 	}
-	class.Props = append(class.Props, &Property{"test", TInt, "value"})
+	class.Props = append(class.Props, &Property{"test", TNumber, "value"})
 	if class.Props == nil {
 		t.Errorf("Class has no props")
 	}
@@ -45,7 +45,7 @@ var parseTests = []parseTest{
 			[]tclass{
 				{"testclass",
 					[]Property{
-						{"version", TInt, "11"},
+						{"version", TNumber, "11"},
 					},
 					[]ArrayProperty{},
 					[]tclass{},
@@ -58,10 +58,10 @@ var parseTests = []parseTest{
 		"attributes", "version=11; string=\"teststring\"; float1=123.456; float2=+123.456;",
 		tclass{"mission",
 			[]Property{
-				{"version", TInt, "11"},
+				{"version", TNumber, "11"},
 				{"string", TString, "teststring"},
-				{"float1", TFloat, "123.456"},
-				{"float2", TFloat, "+123.456"},
+				{"float1", TNumber, "123.456"},
+				{"float2", TNumber, "+123.456"},
 			},
 			[]ArrayProperty{},
 			[]tclass{},
@@ -73,7 +73,7 @@ var parseTests = []parseTest{
 		tclass{"mission",
 			[]Property{},
 			[]ArrayProperty{
-				{"arr", TInt, []string{"1", "2", "3"}},
+				{"arr", TNumber, []string{"1", "2", "3"}},
 			},
 			[]tclass{},
 		},
@@ -88,7 +88,7 @@ var parseTests = []parseTest{
 				{"test",
 					[]Property{},
 					[]ArrayProperty{
-						{"arr", TInt, []string{"1", "2", "3"}},
+						{"arr", TNumber, []string{"1", "2", "3"}},
 					},
 					[]tclass{},
 				},
@@ -101,7 +101,7 @@ var parseTests = []parseTest{
 		tclass{"mission",
 			[]Property{},
 			[]ArrayProperty{
-				{"arr", TFloat, []string{"1.2", "2.3", "3.4"}},
+				{"arr", TNumber, []string{"1.2", "2.3", "3.4"}},
 			},
 			[]tclass{},
 		},
@@ -116,7 +116,7 @@ var parseTests = []parseTest{
 				{"test",
 					[]Property{},
 					[]ArrayProperty{
-						{"arr", TFloat, []string{"1.2", "2.3", "3.4"}},
+						{"arr", TNumber, []string{"1.2", "2.3", "3.4"}},
 					},
 					[]tclass{},
 				},
@@ -189,7 +189,7 @@ func TestParseSimple(t *testing.T) {
 	if at.Name != "version" {
 		t.Errorf("Prop wrong identifier")
 	}
-	if at.Typ != TInt {
+	if at.Typ != TNumber {
 		t.Errorf("Type of prop wrong")
 	}
 	if at.Value != "11" {

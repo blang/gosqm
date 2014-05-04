@@ -31,14 +31,14 @@ func TestParseIntel(t *testing.T) {
 		intelclass := &sqm.Class{
 			Name: "Intel",
 			Props: []*sqm.Property{
-				&sqm.Property{"resistanceWest", sqm.TInt, "1"},
-				&sqm.Property{"startWeather", sqm.TFloat, "0.3"},
-				&sqm.Property{"forecastWeather", sqm.TFloat, "0.8"},
-				&sqm.Property{"year", sqm.TInt, "2009"},
-				&sqm.Property{"month", sqm.TInt, "10"},
-				&sqm.Property{"day", sqm.TInt, "28"},
-				&sqm.Property{"hour", sqm.TInt, "6"},
-				&sqm.Property{"minute", sqm.TInt, "5"},
+				&sqm.Property{"resistanceWest", sqm.TNumber, "1"},
+				&sqm.Property{"startWeather", sqm.TNumber, "0.3"},
+				&sqm.Property{"forecastWeather", sqm.TNumber, "0.8"},
+				&sqm.Property{"year", sqm.TNumber, "2009"},
+				&sqm.Property{"month", sqm.TNumber, "10"},
+				&sqm.Property{"day", sqm.TNumber, "28"},
+				&sqm.Property{"hour", sqm.TNumber, "6"},
+				&sqm.Property{"minute", sqm.TNumber, "5"},
 			},
 		}
 		Convey("When parse intel", func() {
@@ -67,15 +67,15 @@ func TestParseGroups(t *testing.T) {
 		unitclass := &sqm.Class{
 			Name: "Item0",
 			Props: []*sqm.Property{
-				&sqm.Property{"azimut", sqm.TFloat, "12.3"},
+				&sqm.Property{"azimut", sqm.TNumber, "12.3"},
 				&sqm.Property{"vehicle", sqm.TString, "classname"},
-				&sqm.Property{"leader", sqm.TInt, "1"},
+				&sqm.Property{"leader", sqm.TNumber, "1"},
 				&sqm.Property{"special", sqm.TString, "FORM"},
-				&sqm.Property{"skill", sqm.TFloat, "0.60000002"},
+				&sqm.Property{"skill", sqm.TNumber, "0.60000002"},
 			},
 
 			Arrprops: []*sqm.ArrayProperty{
-				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 		}
 		effectsClass := &sqm.Class{
@@ -88,7 +88,7 @@ func TestParseGroups(t *testing.T) {
 				&sqm.Property{"showWP", sqm.TString, "NEVER"},
 			},
 			Arrprops: []*sqm.ArrayProperty{
-				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 			Classes: []*sqm.Class{effectsClass},
 		}
@@ -184,7 +184,7 @@ func TestParseMarkers(t *testing.T) {
 		markerClass := &sqm.Class{
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
-				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 			Props: []*sqm.Property{
 				&sqm.Property{"name", sqm.TString, "m1"},
@@ -192,9 +192,9 @@ func TestParseMarkers(t *testing.T) {
 				&sqm.Property{"type", sqm.TString, "Empty"},
 				&sqm.Property{"colorName", sqm.TString, "ColorRed"},
 				&sqm.Property{"fillName", sqm.TString, "Border"},
-				&sqm.Property{"a", sqm.TInt, "1000"},
-				&sqm.Property{"b", sqm.TInt, "2000"},
-				&sqm.Property{"drawBorder", sqm.TInt, "1"},
+				&sqm.Property{"a", sqm.TNumber, "1000"},
+				&sqm.Property{"b", sqm.TNumber, "2000"},
+				&sqm.Property{"drawBorder", sqm.TNumber, "1"},
 			},
 		}
 		markersClass := &sqm.Class{
@@ -241,16 +241,16 @@ func TestParseSensors(t *testing.T) {
 		sensorClass := &sqm.Class{
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
-				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 			Props: []*sqm.Property{
 				&sqm.Property{"name", sqm.TString, "s1"},
-				&sqm.Property{"a", sqm.TFloat, "1000"},
-				&sqm.Property{"b", sqm.TFloat, "2000"},
-				&sqm.Property{"angle", sqm.TFloat, "38.8545"},
-				&sqm.Property{"rectangular", sqm.TInt, "1"},
-				&sqm.Property{"repeating", sqm.TInt, "1"},
-				&sqm.Property{"interruptable", sqm.TInt, "1"},
+				&sqm.Property{"a", sqm.TNumber, "1000"},
+				&sqm.Property{"b", sqm.TNumber, "2000"},
+				&sqm.Property{"angle", sqm.TNumber, "38.8545"},
+				&sqm.Property{"rectangular", sqm.TNumber, "1"},
+				&sqm.Property{"repeating", sqm.TNumber, "1"},
+				&sqm.Property{"interruptable", sqm.TNumber, "1"},
 				&sqm.Property{"age", sqm.TString, "UNKNOWN"},
 				&sqm.Property{"activationBy", sqm.TString, "ANY"},
 				&sqm.Property{"expCond", sqm.TString, "isServer"},
@@ -312,14 +312,14 @@ func TestParseVehicles(t *testing.T) {
 		vehClass := &sqm.Class{
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
-				&sqm.ArrayProperty{"position", sqm.TFloat, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 			Props: []*sqm.Property{
 				&sqm.Property{"name", sqm.TString, "s1"},
-				&sqm.Property{"azimut", sqm.TFloat, "30.2"},
+				&sqm.Property{"azimut", sqm.TNumber, "30.2"},
 				&sqm.Property{"side", sqm.TString, "EMPTY"},
 				&sqm.Property{"vehicle", sqm.TString, "HeliH"},
-				&sqm.Property{"skill", sqm.TFloat, "0.6"},
+				&sqm.Property{"skill", sqm.TNumber, "0.6"},
 			},
 		}
 		vehsClass := &sqm.Class{

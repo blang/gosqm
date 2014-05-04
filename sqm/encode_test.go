@@ -38,7 +38,7 @@ func TestEncode(t *testing.T) {
 		Convey("Given a Array Property of type Integer with 3 members", func() {
 			arrProp := &ArrayProperty{
 				Name:   "ArrayProp",
-				Typ:    TInt,
+				Typ:    TNumber,
 				Values: []string{"1", "2", "3"},
 			}
 			Convey("Encoding it with level 1", func() {
@@ -53,7 +53,7 @@ func TestEncode(t *testing.T) {
 		Convey("Given a Array Property of type Float with 3 members", func() {
 			arrProp := &ArrayProperty{
 				Name:   "ArrayProp",
-				Typ:    TFloat,
+				Typ:    TNumber,
 				Values: []string{"1.123", "2.123", "3.123"},
 			}
 			Convey("Encoding it with level 1", func() {
@@ -125,7 +125,7 @@ func TestEncode(t *testing.T) {
 		Convey("Given an Integer Property", func() {
 			prop := &Property{
 				Name:  "key",
-				Typ:   TInt,
+				Typ:   TNumber,
 				Value: "123",
 			}
 			Convey("Encoding it with level 1", func() {
@@ -140,7 +140,7 @@ func TestEncode(t *testing.T) {
 		Convey("Given an Float Property", func() {
 			prop := &Property{
 				Name:  "key",
-				Typ:   TFloat,
+				Typ:   TNumber,
 				Value: "123.456",
 			}
 			Convey("Encoding it with level 1", func() {
@@ -215,7 +215,7 @@ func TestEncode(t *testing.T) {
 				Props: []*Property{
 					&Property{
 						Name:  "version",
-						Typ:   TInt,
+						Typ:   TNumber,
 						Value: "1",
 					},
 				},

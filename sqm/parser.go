@@ -194,25 +194,15 @@ func parseArrayPropertyValue(p *Parser) (pstateFn, *parserError) {
 		p.propBuff.arrprop = nil
 		return parseInsideClass, nil
 	case itemInt:
-		p.propBuff.arrprop.Typ = TInt
-		err := parseArrayPropertyIntValues(p)
-		if err != nil {
-			return nil, err
-		}
-		if n := p.buff.next(); n.typ != itemCloseArray {
-			return nil, p.makeParserError("Expected closing array after array int value")
-		}
-		p.class.Arrprops = append(p.class.Arrprops, p.propBuff.arrprop)
-		p.propBuff.arrprop = nil
-		return parseInsideClass, nil
+		fallthrough
 	case itemFloat:
-		p.propBuff.arrprop.Typ = TFloat
-		err := parseArrayPropertyFloatValues(p)
+		p.propBuff.arrprop.Typ = TNumber
+		err := parseArrayPropertyNumberValues(p)
 		if err != nil {
 			return nil, err
 		}
 		if n := p.buff.next(); n.typ != itemCloseArray {
-			return nil, p.makeParserError("Expected closing array after array float value")
+			return nil, p.makeParserError("Expected closing array after array number value")
 		}
 		p.class.Arrprops = append(p.class.Arrprops, p.propBuff.arrprop)
 		p.propBuff.arrprop = nil
@@ -249,10 +239,10 @@ func parseArrayPropertyStringValues(p *Parser) *parserError {
 	}
 }
 
-func parseArrayPropertyIntValues(p *Parser) *parserError {
+func parseArrayPropertyNumberValues(p *Parser) *parserError {
 	p.ignoreSpace()
-	if t := p.buff.next(); t.typ != itemInt {
-		return p.makeParserError("Expected int for array int value")
+	if t := p.buff.next(); t.typ != itemInt && t.typ != itemFloat {
+		return p.makeParserError("Expected number for array value")
 	} else {
 		p.propBuff.arrprop.Values = append(p.propBuff.arrprop.Values, t.val)
 	}
@@ -260,26 +250,7 @@ func parseArrayPropertyIntValues(p *Parser) *parserError {
 	switch p.buff.lookAhead().typ {
 	case itemArraySeperator:
 		p.buff.next()
-		return parseArrayPropertyIntValues(p)
-	case itemCloseArray:
-		return nil
-	default:
-		return p.makeParserError("Unexpected token in array int value")
-	}
-}
-
-func parseArrayPropertyFloatValues(p *Parser) *parserError {
-	p.ignoreSpace()
-	if t := p.buff.next(); t.typ != itemFloat {
-		return p.makeParserError("Expected int for array float value")
-	} else {
-		p.propBuff.arrprop.Values = append(p.propBuff.arrprop.Values, t.val)
-	}
-	p.ignoreSpace()
-	switch p.buff.lookAhead().typ {
-	case itemArraySeperator:
-		p.buff.next()
-		return parseArrayPropertyFloatValues(p)
+		return parseArrayPropertyNumberValues(p)
 	case itemCloseArray:
 		return nil
 	default:
@@ -308,18 +279,9 @@ func parsePropertyValue(p *Parser) (pstateFn, *parserError) {
 		p.propBuff.prop = nil
 		return parseInsideClass, nil
 	case itemFloat:
-		p.propBuff.prop.Typ = TFloat
-		v := p.buff.next()
-		p.propBuff.prop.Value = v.val
-		p.ignoreSpace()
-		if v := p.buff.next(); v.typ != itemSemicolon {
-			return nil, p.makeParserError("Unclosed float assignment")
-		}
-		p.class.Props = append(p.class.Props, p.propBuff.prop)
-		p.propBuff.prop = nil
-		return parseInsideClass, nil
+		fallthrough
 	case itemInt:
-		p.propBuff.prop.Typ = TInt
+		p.propBuff.prop.Typ = TNumber
 		v := p.buff.next()
 		p.propBuff.prop.Value = v.val
 		p.ignoreSpace()

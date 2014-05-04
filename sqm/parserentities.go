@@ -7,9 +7,8 @@ import (
 type PropType int
 
 const (
-	TString PropType = iota
-	TFloat
-	TInt
+	TString PropType = iota // Arma escaped string
+	TNumber                 // Integer or float
 )
 
 type Property struct {
@@ -44,10 +43,8 @@ func (t PropType) String() string {
 	switch t {
 	case TString:
 		return "TString"
-	case TFloat:
-		return "TFloat"
-	case TInt:
-		return "TInt"
+	case TNumber:
+		return "TNumber"
 	}
 	return "Unkown"
 }

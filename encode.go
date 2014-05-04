@@ -27,7 +27,7 @@ func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
 	mainClass := &sqm.Class{
 		Name: "mission",
 	}
-	mainClass.Props = append(mainClass.Props, &sqm.Property{"version", sqm.TInt, missionFile.Version})
+	mainClass.Props = append(mainClass.Props, &sqm.Property{"version", sqm.TNumber, missionFile.Version})
 
 	missionClass := &sqm.Class{
 		Name: "Mission",
@@ -144,14 +144,14 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 	} else {
 		resistanceWest = "0"
 	}
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"resistanceWest", sqm.TInt, resistanceWest})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"startWeather", sqm.TFloat, i.StartWeather})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"forecastWeather", sqm.TFloat, i.ForecastWeather})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"year", sqm.TInt, i.Year})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"month", sqm.TInt, i.Month})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"day", sqm.TInt, i.Day})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"hour", sqm.TInt, i.Hour})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"minute", sqm.TInt, i.Minute})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"resistanceWest", sqm.TNumber, resistanceWest})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"startWeather", sqm.TNumber, i.StartWeather})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"forecastWeather", sqm.TNumber, i.ForecastWeather})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"year", sqm.TNumber, i.Year})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"month", sqm.TNumber, i.Month})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"day", sqm.TNumber, i.Day})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"hour", sqm.TNumber, i.Hour})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"minute", sqm.TNumber, i.Minute})
 
 	if i.class != nil {
 		class.Props = addMissingProps(reg, class.Props, i.class.Props)
@@ -160,7 +160,7 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 }
 
 func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
-	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(vehs))})
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(vehs))})
 	for i, v := range vehs {
 		vehClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
@@ -176,11 +176,11 @@ func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
 
 func encodeVehicle(v *Vehicle, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, v.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TFloat, v.Angle})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"skill", sqm.TFloat, v.Skill})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
 	if v.class != nil {
 		class.Props = addMissingProps(reg, class.Props, v.class.Props)
@@ -189,7 +189,7 @@ func encodeVehicle(v *Vehicle, class *sqm.Class) {
 }
 
 func encodeSensors(sensors []*Sensor, class *sqm.Class) {
-	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(sensors))})
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(sensors))})
 	for i, s := range sensors {
 		sensorClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
@@ -201,20 +201,20 @@ func encodeSensors(sensors []*Sensor, class *sqm.Class) {
 
 func encodeSensor(s *Sensor, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, s.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, s.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, s.Name})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TFloat, s.Size[0]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TFloat, s.Size[1]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TFloat, s.Angle})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TNumber, s.Size[0]})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TNumber, s.Size[1]})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, s.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"activationBy", sqm.TString, s.ActivationBy})
 	if s.IsRectangle {
-		class.Props = addProp(reg, class.Props, &sqm.Property{"rectangular", sqm.TInt, "1"})
+		class.Props = addProp(reg, class.Props, &sqm.Property{"rectangular", sqm.TNumber, "1"})
 	}
 	if s.IsRepeating {
-		class.Props = addProp(reg, class.Props, &sqm.Property{"repeating", sqm.TInt, "1"})
+		class.Props = addProp(reg, class.Props, &sqm.Property{"repeating", sqm.TNumber, "1"})
 	}
 	if s.IsInterruptible {
-		class.Props = addProp(reg, class.Props, &sqm.Property{"interruptable", sqm.TInt, "1"})
+		class.Props = addProp(reg, class.Props, &sqm.Property{"interruptable", sqm.TNumber, "1"})
 	}
 	class.Props = addProp(reg, class.Props, &sqm.Property{"age", sqm.TString, s.Age})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expCond", sqm.TString, s.Condition})
@@ -229,7 +229,7 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 }
 
 func encodeMarkers(markers []*Marker, class *sqm.Class) {
-	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(markers))})
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(markers))})
 	for i, m := range markers {
 		markerClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
@@ -241,7 +241,7 @@ func encodeMarkers(markers []*Marker, class *sqm.Class) {
 
 func encodeMarker(m *Marker, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, m.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, m.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, m.Name})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"type", sqm.TString, m.Type})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"text", sqm.TString, m.Text})
@@ -252,9 +252,9 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 	if m.DrawBorder {
 		drawBorder = "1"
 	}
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"drawBorder", sqm.TInt, drawBorder})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TFloat, m.Size[0]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TFloat, m.Size[1]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"drawBorder", sqm.TNumber, drawBorder})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TNumber, m.Size[0]})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TNumber, m.Size[1]})
 	if m.class != nil {
 		class.Props = addMissingProps(reg, class.Props, m.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, m.class.Arrprops)
@@ -262,7 +262,7 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 
 }
 func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class) {
-	class.Props = append(class.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(groups))})
+	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(groups))})
 	for i, g := range groups {
 		groupClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
@@ -284,7 +284,7 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 		groupMemberClass := &sqm.Class{
 			Name: "Vehicles",
 		}
-		groupMemberClass.Props = append(groupMemberClass.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(g.Units))})
+		groupMemberClass.Props = append(groupMemberClass.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(g.Units))})
 		e.wg.Add(1)
 		go func(g *Group, groupMemberClass *sqm.Class) {
 			e.encodeGroupMembers(g.Units, groupMemberClass)
@@ -297,7 +297,7 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 		waypointsClass := &sqm.Class{
 			Name: "Waypoints",
 		}
-		waypointsClass.Props = append(waypointsClass.Props, &sqm.Property{"items", sqm.TInt, strconv.Itoa(len(g.Waypoints))})
+		waypointsClass.Props = append(waypointsClass.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(g.Waypoints))})
 		e.wg.Add(1)
 		go func(g *Group, waypointsClass *sqm.Class) {
 			encodeWaypoints(g.Waypoints, waypointsClass)
@@ -329,17 +329,17 @@ func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class) {
 
 func encodeUnit(u *Unit, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, u.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, u.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, u.Name})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TFloat, u.Direction})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, u.Direction})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, u.Classname})
 	var leader string
 	if u.IsLeader {
 		leader = "1"
 	}
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"leader", sqm.TInt, leader})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"leader", sqm.TNumber, leader})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, u.Formation})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TFloat, u.Skill})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, u.Skill})
 
 	if u.class != nil {
 		class.Props = addMissingProps(reg, class.Props, u.class.Props)
@@ -359,7 +359,7 @@ func encodeWaypoints(waypoints []*Waypoint, class *sqm.Class) {
 
 func encodeWaypoint(w *Waypoint, class *sqm.Class) {
 	reg := make(map[string]bool)
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TFloat, w.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, w.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"type", sqm.TString, w.Type})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"showWP", sqm.TString, w.ShowWP})
 	if w.classEffects != nil {
