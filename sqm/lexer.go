@@ -340,7 +340,7 @@ func lexInsideArray(l *lexer) stateFn {
 		l.backup()
 		return lexArrayNumber
 	default:
-		return l.errorf("unrecognized character in assignment value: %#U", r)
+		return l.errorf("unrecognized character inside array: %#U", r)
 	}
 }
 
@@ -470,6 +470,6 @@ func lexInsideClass(l *lexer) stateFn {
 		l.emit(itemEOF)
 		return nil
 	default:
-		return l.errorf("unrecognized character in assignment value: %#U", r)
+		return l.errorf("unrecognized character inside class: %#U", r)
 	}
 }

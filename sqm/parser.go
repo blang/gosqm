@@ -84,7 +84,8 @@ func (ep *parserError) String() string {
 
 //TODO: Make better parser errors by using parserError fields
 func (p *Parser) makeParserError(s string) *parserError {
-	err := fmt.Sprintf("Got error %q on %q", s, p.buff.curr())
+	col, line := p.lexer.Position(p.buff.curr())
+	err := fmt.Sprintf("Input:%d:%d: %s", col, line, s)
 	return &parserError{s: err}
 }
 
@@ -334,7 +335,9 @@ func parseInsideClass(p *Parser) (pstateFn, *parserError) {
 	p.ignoreSpace()
 	i := p.buff.lookAhead()
 	switch i.typ {
-	case itemEOF, itemError:
+	case itemError:
+		return nil, p.makeParserError("Error while parsing inside class: " + i.val)
+	case itemEOF:
 		if p.class.parent != nil {
 			return nil, p.makeParserError("Closing base class not allowed, unclosed class")
 		}
@@ -365,7 +368,7 @@ func (p *Parser) Run() (*Class, *parserError) {
 	for state := pstartState; state != nil; {
 		state, err = state(p)
 		if err != nil {
-			fmt.Printf("Got error: %s\n", err)
+			fmt.Printf("Error: %s\n", err)
 			break
 		}
 	}
