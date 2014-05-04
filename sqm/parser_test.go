@@ -261,7 +261,7 @@ func TestParseMissionSQM(t *testing.T) {
 		t.Skip("Skip mission.sqm in short mode")
 		return
 	}
-	buf, err := ioutil.ReadFile("./mission.sqm")
+	buf, err := ioutil.ReadFile("../testdata/mission.sqm")
 	if err != nil {
 		t.Errorf("Could not open mission.sqm")
 		return
@@ -276,7 +276,7 @@ func TestParseMissionSQM(t *testing.T) {
 }
 
 func BenchmarkParseMissionSQM(b *testing.B) {
-	buf, err := ioutil.ReadFile("./mission.sqm")
+	buf, err := ioutil.ReadFile("../testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -295,7 +295,7 @@ func BenchmarkParseMissionSQM(b *testing.B) {
 func BenchmarkParseMissionSQMReadfile(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
-		buf, err := ioutil.ReadFile("./mission.sqm")
+		buf, err := ioutil.ReadFile("../testdata/mission.sqm")
 		bufstr := string(buf)
 		if err != nil {
 			b.Errorf("Could not open mission.sqm")

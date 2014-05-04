@@ -8,7 +8,7 @@ import (
 )
 
 func BenchmarkFullDecode(b *testing.B) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -31,7 +31,7 @@ func BenchmarkFullDecode(b *testing.B) {
 }
 
 func BenchmarkFullEncode(b *testing.B) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -63,7 +63,7 @@ func BenchmarkFullEncode(b *testing.B) {
 }
 
 func BenchmarkMissionEncode(b *testing.B) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -88,7 +88,7 @@ func BenchmarkMissionEncode(b *testing.B) {
 }
 
 func BenchmarkMissionDecode(b *testing.B) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -113,7 +113,7 @@ func BenchmarkMissionDecode(b *testing.B) {
 }
 
 func BenchmarkFullEncodeDecode(b *testing.B) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		b.Errorf("Could not open mission.sqm")
@@ -145,7 +145,7 @@ func BenchmarkFullEncodeDecode(b *testing.B) {
 }
 
 func TestFullEncodeDecode(t *testing.T) {
-	buf, err := ioutil.ReadFile("../sqm/mission.sqm")
+	buf, err := ioutil.ReadFile("testdata/mission.sqm")
 	bufstr := string(buf)
 	if err != nil {
 		t.Errorf("Could not open mission.sqm")

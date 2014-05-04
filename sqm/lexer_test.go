@@ -449,7 +449,7 @@ func TestMissionSQM(t *testing.T) {
 		t.Skip("Skip mission.sqm in short mode")
 		return
 	}
-	buf, err := ioutil.ReadFile("./mission.sqm")
+	buf, err := ioutil.ReadFile("../testdata/mission.sqm")
 	if err != nil {
 		t.Errorf("Could not open mission.sqm")
 		return
