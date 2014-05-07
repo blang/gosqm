@@ -30,7 +30,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeArrProperty(arrProp, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  ArrayProp[]={"first","second","third"};`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`ArrayProp[]={"first","second","third"};`+LINEBREAK)
 				})
 			})
 		})
@@ -45,7 +45,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeArrProperty(arrProp, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  ArrayProp[]={1,2,3};`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`ArrayProp[]={1,2,3};`+LINEBREAK)
 				})
 			})
 		})
@@ -60,7 +60,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeArrProperty(arrProp, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  ArrayProp[]={1.123,2.123,3.123};`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`ArrayProp[]={1.123,2.123,3.123};`+LINEBREAK)
 				})
 			})
 		})
@@ -76,12 +76,12 @@ func TestEncode(t *testing.T) {
 					err := e.encodeArrProperty(arrProp, 1)
 					So(err, ShouldBeNil)
 					So(buf.String(), ShouldEqual,
-						`  addOns[]=`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    "first",`+LINEBREAK+
-							`    "second",`+LINEBREAK+
-							`    "third"`+LINEBREAK+
-							`  };`+LINEBREAK)
+						indent(1)+`addOns[]=`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`"first",`+LINEBREAK+
+							indent(2)+`"second",`+LINEBREAK+
+							indent(2)+`"third"`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK)
 				})
 			})
 		})
@@ -97,12 +97,12 @@ func TestEncode(t *testing.T) {
 					err := e.encodeArrProperty(arrProp, 1)
 					So(err, ShouldBeNil)
 					So(buf.String(), ShouldEqual,
-						`  addOnsAuto[]=`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    "first",`+LINEBREAK+
-							`    "second",`+LINEBREAK+
-							`    "third"`+LINEBREAK+
-							`  };`+LINEBREAK)
+						indent(1)+`addOnsAuto[]=`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`"first",`+LINEBREAK+
+							indent(2)+`"second",`+LINEBREAK+
+							indent(2)+`"third"`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK)
 				})
 			})
 		})
@@ -117,7 +117,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeProperty(prop, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  key="value";`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`key="value";`+LINEBREAK)
 				})
 			})
 		})
@@ -132,7 +132,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeProperty(prop, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  key=123;`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`key=123;`+LINEBREAK)
 				})
 			})
 		})
@@ -147,7 +147,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeProperty(prop, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  key=123.456;`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`key=123.456;`+LINEBREAK)
 				})
 			})
 		})
@@ -167,7 +167,7 @@ func TestEncode(t *testing.T) {
 				Convey("Should write correct string", func() {
 					err := e.encodeClass(c, 1)
 					So(err, ShouldBeNil)
-					So(buf.String(), ShouldEqual, `  class myclass`+LINEBREAK+`  {`+LINEBREAK+`  };`+LINEBREAK)
+					So(buf.String(), ShouldEqual, indent(1)+`class myclass`+LINEBREAK+indent(1)+`{`+LINEBREAK+indent(1)+`};`+LINEBREAK)
 				})
 			})
 		})
@@ -188,9 +188,9 @@ func TestEncode(t *testing.T) {
 					So(buf.String(), ShouldEqual,
 						`class myclass`+LINEBREAK+
 							`{`+LINEBREAK+
-							`  class subclass`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`  };`+LINEBREAK+
+							indent(1)+`class subclass`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK+
 							`};`+LINEBREAK)
 				})
 			})
@@ -199,12 +199,12 @@ func TestEncode(t *testing.T) {
 					err := e.encodeClass(c, 1)
 					So(err, ShouldBeNil)
 					So(buf.String(), ShouldEqual,
-						`  class myclass`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    class subclass`+LINEBREAK+
-							`    {`+LINEBREAK+
-							`    };`+LINEBREAK+
-							`  };`+LINEBREAK)
+						indent(1)+`class myclass`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`class subclass`+LINEBREAK+
+							indent(2)+`{`+LINEBREAK+
+							indent(2)+`};`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK)
 				})
 			})
 		})
@@ -263,22 +263,22 @@ func TestEncode(t *testing.T) {
 					So(buf.String(), ShouldEqual,
 						`class mainclass`+LINEBREAK+
 							`{`+LINEBREAK+
-							`  version=1;`+LINEBREAK+
-							`  class myclass`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    addOnsAuto[]=`+LINEBREAK+
-							`    {`+LINEBREAK+
-							`      "first",`+LINEBREAK+
-							`      "second",`+LINEBREAK+
-							`      "third"`+LINEBREAK+
-							`    };`+LINEBREAK+
-							`    key1="value1";`+LINEBREAK+
-							`    key2="value2";`+LINEBREAK+
-							`    class subclass`+LINEBREAK+
-							`    {`+LINEBREAK+
-							`      key1="value1";`+LINEBREAK+
-							`    };`+LINEBREAK+
-							`  };`+LINEBREAK+
+							indent(1)+`version=1;`+LINEBREAK+
+							indent(1)+`class myclass`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`addOnsAuto[]=`+LINEBREAK+
+							indent(2)+`{`+LINEBREAK+
+							indent(3)+`"first",`+LINEBREAK+
+							indent(3)+`"second",`+LINEBREAK+
+							indent(3)+`"third"`+LINEBREAK+
+							indent(2)+`};`+LINEBREAK+
+							indent(2)+`key1="value1";`+LINEBREAK+
+							indent(2)+`key2="value2";`+LINEBREAK+
+							indent(2)+`class subclass`+LINEBREAK+
+							indent(2)+`{`+LINEBREAK+
+							indent(3)+`key1="value1";`+LINEBREAK+
+							indent(2)+`};`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK+
 							`};`+LINEBREAK)
 				})
 			})
@@ -291,18 +291,18 @@ func TestEncode(t *testing.T) {
 						`version=1;`+LINEBREAK+
 							`class myclass`+LINEBREAK+
 							`{`+LINEBREAK+
-							`  addOnsAuto[]=`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    "first",`+LINEBREAK+
-							`    "second",`+LINEBREAK+
-							`    "third"`+LINEBREAK+
-							`  };`+LINEBREAK+
-							`  key1="value1";`+LINEBREAK+
-							`  key2="value2";`+LINEBREAK+
-							`  class subclass`+LINEBREAK+
-							`  {`+LINEBREAK+
-							`    key1="value1";`+LINEBREAK+
-							`  };`+LINEBREAK+
+							indent(1)+`addOnsAuto[]=`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`"first",`+LINEBREAK+
+							indent(2)+`"second",`+LINEBREAK+
+							indent(2)+`"third"`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK+
+							indent(1)+`key1="value1";`+LINEBREAK+
+							indent(1)+`key2="value2";`+LINEBREAK+
+							indent(1)+`class subclass`+LINEBREAK+
+							indent(1)+`{`+LINEBREAK+
+							indent(2)+`key1="value1";`+LINEBREAK+
+							indent(1)+`};`+LINEBREAK+
 							`};`+LINEBREAK)
 				})
 			})
@@ -310,7 +310,7 @@ func TestEncode(t *testing.T) {
 	})
 	Convey("Indent should return correct amount of spaces", t, func() {
 		So(indent(0), ShouldEqual, "")
-		So(indent(1), ShouldEqual, "  ")
-		So(indent(2), ShouldEqual, "    ")
+		So(indent(1), ShouldEqual, "\t")
+		So(indent(2), ShouldEqual, "\t\t")
 	})
 }

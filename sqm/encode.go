@@ -6,7 +6,7 @@ import (
 )
 
 const LINEBREAK = "\r\n"
-const INDENT = 2
+const INDENT = 1
 
 type Encoder struct {
 	w io.Writer
@@ -176,7 +176,7 @@ func indent(level int) string {
 			var buffer bytes.Buffer
 
 			for i := 0; i < level*INDENT; i++ {
-				buffer.WriteString(" ")
+				buffer.WriteString("\t")
 			}
 			str := buffer.String()
 			indentCache[level-1] = &str
@@ -189,7 +189,7 @@ func indent(level int) string {
 		var buffer bytes.Buffer
 
 		for i := 0; i < level*INDENT; i++ {
-			buffer.WriteString(" ")
+			buffer.WriteString("\t")
 		}
 		return buffer.String()
 	}
