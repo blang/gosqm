@@ -30,16 +30,26 @@ type Waypoint struct {
 }
 
 type Unit struct {
-	Name        string
-	Position    [3]string
-	Direction   string
-	Classname   string
-	Skill       string
-	Formation   string
-	IsLeader    bool
-	Player      string
-	Description string
-	class       *sqm.Class
+	Name         string
+	Position     [3]string
+	Direction    string
+	Classname    string
+	Skill        string
+	Special      string
+	IsLeader     bool
+	Player       string
+	Description  string
+	Presence     string
+	PresenceCond string
+	Placement    string
+	Age          string
+	Lock         string
+	Rank         string
+	Health       string
+	Fuel         string
+	Ammo         string
+	Init         string
+	class        *sqm.Class
 }
 
 type Marker struct {

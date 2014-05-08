@@ -79,6 +79,16 @@ func TestParseGroups(t *testing.T) {
 				&sqm.Property{"skill", sqm.TNumber, "0.60000002"},
 				&sqm.Property{"player", sqm.TString, "PLAYER COMMANDER"},
 				&sqm.Property{"description", sqm.TString, "Description"},
+				&sqm.Property{"presence", sqm.TNumber, "0.3"},
+				&sqm.Property{"presenceCondition", sqm.TString, "true"},
+				&sqm.Property{"placement", sqm.TNumber, "20"},
+				&sqm.Property{"age", sqm.TString, "5 MIN"},
+				&sqm.Property{"lock", sqm.TString, "UNLOCKED"},
+				&sqm.Property{"rank", sqm.TString, "CORPORAL"},
+				&sqm.Property{"health", sqm.TNumber, "0.1"},
+				&sqm.Property{"fuel", sqm.TNumber, "0.2"},
+				&sqm.Property{"ammo", sqm.TNumber, "0.3"},
+				&sqm.Property{"init", sqm.TString, "hint a"},
 			},
 
 			Arrprops: []*sqm.ArrayProperty{
@@ -137,12 +147,22 @@ func TestParseGroups(t *testing.T) {
 				So(unit.Name, ShouldEqual, "name")
 				So(unit.Classname, ShouldEqual, "classname")
 				So(unit.Direction, ShouldEqual, "12.3")
-				So(unit.Formation, ShouldEqual, "FORM")
+				So(unit.Special, ShouldEqual, "FORM")
 				So(unit.IsLeader, ShouldBeTrue)
 				So(unit.Skill, ShouldEqual, "0.60000002")
 				So(unit.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
 				So(unit.Player, ShouldEqual, "PLAYER COMMANDER")
 				So(unit.Description, ShouldEqual, "Description")
+				So(unit.Presence, ShouldEqual, "0.3")
+				So(unit.PresenceCond, ShouldEqual, "true")
+				So(unit.Placement, ShouldEqual, "20")
+				So(unit.Age, ShouldEqual, "5 MIN")
+				So(unit.Lock, ShouldEqual, "UNLOCKED")
+				So(unit.Rank, ShouldEqual, "CORPORAL")
+				So(unit.Health, ShouldEqual, "0.1")
+				So(unit.Fuel, ShouldEqual, "0.2")
+				So(unit.Ammo, ShouldEqual, "0.3")
+				So(unit.Init, ShouldEqual, "hint a")
 			})
 			Convey("Pointer to class was set", func() {
 				So(unit.class, ShouldPointTo, unitclass)

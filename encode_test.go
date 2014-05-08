@@ -114,18 +114,28 @@ func TestEncodeMissionProps(t *testing.T) {
 func TestEncodeUnit(t *testing.T) {
 	Convey("Given fresh unit", t, func() {
 		unit := &Unit{
-			Name:        "name",
-			Position:    [3]string{"1.0", "2.0", "3.0"},
-			Direction:   "0.3",
-			Classname:   "classname",
-			Skill:       "0.1",
-			Formation:   "FORM",
-			IsLeader:    true,
-			Player:      "PLAYER COMMANDER",
-			Description: "Description",
+			Name:         "name",
+			Position:     [3]string{"1.0", "2.0", "3.0"},
+			Direction:    "0.3",
+			Classname:    "classname",
+			Skill:        "0.1",
+			Special:      "FORM",
+			IsLeader:     true,
+			Player:       "PLAYER COMMANDER",
+			Description:  "Description",
+			Presence:     "0.3",
+			PresenceCond: "true",
+			Placement:    "20",
+			Age:          "5 MIN",
+			Lock:         "UNLOCKED",
+			Rank:         "CORPORAL",
+			Health:       "0.1",
+			Fuel:         "0.2",
+			Ammo:         "0.3",
+			Init:         "hint a",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
-					&sqm.Property{"init", sqm.TString, "init"},
+					&sqm.Property{"test", sqm.TString, "init"},
 				},
 			},
 		}
@@ -142,9 +152,19 @@ func TestEncodeUnit(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"leader", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"player", sqm.TString, "PLAYER COMMANDER"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"description", sqm.TString, "Description"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"presence", sqm.TNumber, "0.3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"presenceCondition", sqm.TString, "true"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"placement", sqm.TNumber, "20"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"age", sqm.TString, "5 MIN"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"lock", sqm.TString, "UNLOCKED"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"rank", sqm.TString, "CORPORAL"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"health", sqm.TNumber, "0.1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"fuel", sqm.TNumber, "0.2"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"ammo", sqm.TNumber, "0.3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "hint a"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "init"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"test", sqm.TString, "init"})
 			})
 		})
 	})

@@ -335,10 +335,20 @@ func encodeUnit(u *Unit, class *sqm.Class) {
 		leader = "1"
 	}
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"leader", sqm.TNumber, leader})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, u.Formation})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, u.Special})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, u.Skill})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"player", sqm.TString, u.Player})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"description", sqm.TString, u.Description})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, u.Presence})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, u.PresenceCond})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"placement", sqm.TNumber, u.Placement})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"age", sqm.TString, u.Age})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"lock", sqm.TString, u.Lock})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"rank", sqm.TString, u.Rank})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"health", sqm.TNumber, u.Health})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fuel", sqm.TNumber, u.Fuel})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"ammo", sqm.TNumber, u.Ammo})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"init", sqm.TString, u.Init})
 
 	if u.class != nil {
 		class.Props = addMissingProps(reg, class.Props, u.class.Props)

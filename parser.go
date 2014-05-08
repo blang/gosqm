@@ -193,13 +193,33 @@ func parseGroupMember(class *sqm.Class, unit *Unit) {
 		case "azimut":
 			unit.Direction = prop.Value
 		case "special":
-			unit.Formation = prop.Value
+			unit.Special = prop.Value
 		case "leader":
 			unit.IsLeader = prop.Value == "1"
 		case "player":
 			unit.Player = prop.Value
 		case "description":
 			unit.Description = prop.Value
+		case "presence":
+			unit.Presence = prop.Value
+		case "presenceCondition":
+			unit.PresenceCond = prop.Value
+		case "placement":
+			unit.Placement = prop.Value
+		case "age":
+			unit.Age = prop.Value
+		case "lock":
+			unit.Lock = prop.Value
+		case "rank":
+			unit.Rank = prop.Value
+		case "health":
+			unit.Health = prop.Value
+		case "fuel":
+			unit.Fuel = prop.Value
+		case "ammo":
+			unit.Ammo = prop.Value
+		case "init":
+			unit.Init = prop.Value
 		}
 	}
 	for _, arrprop := range class.Arrprops {
