@@ -121,6 +121,7 @@ func TestEncodeUnit(t *testing.T) {
 			Skill:     "0.1",
 			Formation: "FORM",
 			IsLeader:  true,
+			Player:    "PLAYER COMMANDER",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"init", sqm.TString, "init"},
@@ -138,6 +139,7 @@ func TestEncodeUnit(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"skill", sqm.TNumber, "0.1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"special", sqm.TString, "FORM"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"leader", sqm.TNumber, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"player", sqm.TString, "PLAYER COMMANDER"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "init"})

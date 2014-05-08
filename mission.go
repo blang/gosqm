@@ -37,6 +37,7 @@ type Unit struct {
 	Skill     string
 	Formation string
 	IsLeader  bool
+	Player    string
 	class     *sqm.Class
 }
 

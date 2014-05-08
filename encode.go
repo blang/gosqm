@@ -337,6 +337,7 @@ func encodeUnit(u *Unit, class *sqm.Class) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"leader", sqm.TNumber, leader})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, u.Formation})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, u.Skill})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"player", sqm.TString, u.Player})
 
 	if u.class != nil {
 		class.Props = addMissingProps(reg, class.Props, u.class.Props)

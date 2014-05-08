@@ -195,7 +195,9 @@ func parseGroupMember(class *sqm.Class, unit *Unit) {
 		case "special":
 			unit.Formation = prop.Value
 		case "leader":
-			unit.IsLeader = true
+			unit.IsLeader = prop.Value == "1"
+		case "player":
+			unit.Player = prop.Value
 		}
 	}
 	for _, arrprop := range class.Arrprops {
