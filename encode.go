@@ -162,11 +162,8 @@ func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
 		vehClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
-		e.wg.Add(1)
-		go func(v *Vehicle, vehClass *sqm.Class) {
-			encodeVehicle(v, vehClass)
-			e.wg.Done()
-		}(v, vehClass)
+
+		encodeVehicle(v, vehClass)
 		class.Classes = append(class.Classes, vehClass)
 	}
 }
@@ -284,11 +281,7 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 			Name: "Vehicles",
 		}
 		groupMemberClass.Props = append(groupMemberClass.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(g.Units))})
-		e.wg.Add(1)
-		go func(g *Group, groupMemberClass *sqm.Class) {
-			e.encodeGroupMembers(g.Units, groupMemberClass)
-			e.wg.Done()
-		}(g, groupMemberClass)
+		e.encodeGroupMembers(g.Units, groupMemberClass)
 		class.Classes = append(class.Classes, groupMemberClass)
 	}
 
@@ -297,11 +290,7 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 			Name: "Waypoints",
 		}
 		waypointsClass.Props = append(waypointsClass.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(g.Waypoints))})
-		e.wg.Add(1)
-		go func(g *Group, waypointsClass *sqm.Class) {
-			encodeWaypoints(g.Waypoints, waypointsClass)
-			e.wg.Done()
-		}(g, waypointsClass)
+		encodeWaypoints(g.Waypoints, waypointsClass)
 		class.Classes = append(class.Classes, waypointsClass)
 	}
 
@@ -316,12 +305,8 @@ func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class) {
 		unitclass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
-		e.wg.Add(1)
-		go func(unit *Unit, unitclass *sqm.Class) {
-			encodeUnit(unit, unitclass)
-			e.wg.Done()
-		}(unit, unitclass)
 
+		encodeUnit(unit, unitclass)
 		class.Classes = append(class.Classes, unitclass)
 	}
 }
