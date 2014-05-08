@@ -294,6 +294,16 @@ func parseSensor(c *sqm.Class, sensor *Sensor) {
 			sensor.IsRectangle = prop.Value == "1"
 		case "activationBy":
 			sensor.ActivationBy = prop.Value
+		case "activationType":
+			sensor.ActivationType = prop.Value
+		case "timeoutMin":
+			sensor.TimeoutMin = prop.Value
+		case "timeoutMid":
+			sensor.TimeoutMid = prop.Value
+		case "timeoutMax":
+			sensor.TimeoutMax = prop.Value
+		case "type":
+			sensor.Type = prop.Value
 		case "repeating":
 			sensor.IsRepeating = prop.Value == "1"
 		case "age":
@@ -302,6 +312,8 @@ func parseSensor(c *sqm.Class, sensor *Sensor) {
 			sensor.Condition = prop.Value
 		case "expActiv":
 			sensor.OnActivation = prop.Value
+		case "expDesactiv":
+			sensor.OnDeactivation = prop.Value
 		case "interruptable":
 			sensor.IsInterruptible = prop.Value == "1"
 		}

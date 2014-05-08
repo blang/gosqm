@@ -215,6 +215,11 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"b", sqm.TNumber, s.Size[1]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, s.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"activationBy", sqm.TString, s.ActivationBy})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"activationType", sqm.TString, s.ActivationType})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"timeoutMin", sqm.TNumber, s.TimeoutMin})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"timeoutMid", sqm.TNumber, s.TimeoutMid})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"timeoutMax", sqm.TNumber, s.TimeoutMax})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"type", sqm.TString, s.Type})
 	if s.IsRectangle {
 		class.Props = addProp(reg, class.Props, &sqm.Property{"rectangular", sqm.TNumber, "1"})
 	}
@@ -227,6 +232,7 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"age", sqm.TString, s.Age})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expCond", sqm.TString, s.Condition})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expActiv", sqm.TString, s.OnActivation})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expDesactiv", sqm.TString, s.OnDeactivation})
 	if s.class != nil {
 		class.Props = addMissingProps(reg, class.Props, s.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, s.class.Arrprops)

@@ -254,10 +254,16 @@ func TestEncodeSensor(t *testing.T) {
 			Angle:           "12.3",
 			IsRectangle:     true,
 			ActivationBy:    "ANY",
+			ActivationType:  "GUER D",
+			TimeoutMin:      "1",
+			TimeoutMid:      "2",
+			TimeoutMax:      "3",
+			Type:            "EAST G",
 			IsRepeating:     true,
 			Age:             "UNKNOWN",
 			Condition:       "isServer",
 			OnActivation:    "hint test",
+			OnDeactivation:  "hint test2",
 			IsInterruptible: true,
 			class: &sqm.Class{
 				Props: []*sqm.Property{
@@ -279,10 +285,16 @@ func TestEncodeSensor(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"angle", sqm.TNumber, "12.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"rectangular", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"activationBy", sqm.TString, "ANY"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"activationType", sqm.TString, "GUER D"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"timeoutMin", sqm.TNumber, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"timeoutMid", sqm.TNumber, "2"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"timeoutMax", sqm.TNumber, "3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "EAST G"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"repeating", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"age", sqm.TString, "UNKNOWN"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"expCond", sqm.TString, "isServer"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"expActiv", sqm.TString, "hint test"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"expDesactiv", sqm.TString, "hint test2"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"interruptable", sqm.TNumber, "1"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {

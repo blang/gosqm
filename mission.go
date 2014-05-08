@@ -73,10 +73,16 @@ type Sensor struct {
 	Angle           string
 	IsRectangle     bool
 	ActivationBy    string
+	ActivationType  string
+	TimeoutMin      string
+	TimeoutMid      string
+	TimeoutMax      string
+	Type            string
 	IsRepeating     bool
 	Age             string
 	Condition       string
 	OnActivation    string
+	OnDeactivation  string
 	IsInterruptible bool
 	class           *sqm.Class
 	classEffects    *sqm.Class

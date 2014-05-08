@@ -283,8 +283,14 @@ func TestParseSensors(t *testing.T) {
 				&sqm.Property{"interruptable", sqm.TNumber, "1"},
 				&sqm.Property{"age", sqm.TString, "UNKNOWN"},
 				&sqm.Property{"activationBy", sqm.TString, "ANY"},
+				&sqm.Property{"activationType", sqm.TString, "GUER D"},
+				&sqm.Property{"timeoutMin", sqm.TNumber, "1"},
+				&sqm.Property{"timeoutMid", sqm.TNumber, "2"},
+				&sqm.Property{"timeoutMax", sqm.TNumber, "3"},
+				&sqm.Property{"type", sqm.TString, "EAST G"},
 				&sqm.Property{"expCond", sqm.TString, "isServer"},
 				&sqm.Property{"expActiv", sqm.TString, "hint a1"},
+				&sqm.Property{"expDesactiv", sqm.TString, "hint a2"},
 			},
 			Classes: []*sqm.Class{effectsClass},
 		}
@@ -318,8 +324,14 @@ func TestParseSensors(t *testing.T) {
 				So(s.IsInterruptible, ShouldBeTrue)
 				So(s.Age, ShouldEqual, "UNKNOWN")
 				So(s.ActivationBy, ShouldEqual, "ANY")
+				So(s.ActivationType, ShouldEqual, "GUER D")
+				So(s.TimeoutMin, ShouldEqual, "1")
+				So(s.TimeoutMid, ShouldEqual, "2")
+				So(s.TimeoutMax, ShouldEqual, "3")
+				So(s.Type, ShouldEqual, "EAST G")
 				So(s.Condition, ShouldEqual, "isServer")
 				So(s.OnActivation, ShouldEqual, "hint a1")
+				So(s.OnDeactivation, ShouldEqual, "hint a2")
 			})
 			Convey("Pointer to class was set", func() {
 				So(s.class, ShouldPointTo, sensorClass)
