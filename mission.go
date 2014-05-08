@@ -84,8 +84,19 @@ type Sensor struct {
 	OnActivation    string
 	OnDeactivation  string
 	IsInterruptible bool
+	Effects         *Effects
 	class           *sqm.Class
-	classEffects    *sqm.Class
+}
+
+type Effects struct {
+	Sound       string
+	Voice       string
+	SoundEnv    string
+	SoundDet    string
+	Track       string
+	TitleType   string
+	Title       string
+	TitleEffect string
 }
 
 type Vehicle struct {

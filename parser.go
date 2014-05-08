@@ -324,8 +324,33 @@ func parseSensor(c *sqm.Class, sensor *Sensor) {
 			sensor.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
 		}
 	}
-	if len(sensor.class.Classes) > 0 && sensor.class.Classes[0].Name == "Effects" {
-		sensor.classEffects = sensor.class.Classes[0]
+	if len(c.Classes) > 0 && c.Classes[0].Name == "Effects" {
+		effects := &Effects{}
+		sensor.Effects = effects
+		parseEffects(c.Classes[0], effects)
+	}
+}
+
+func parseEffects(c *sqm.Class, effects *Effects) {
+	for _, prop := range c.Props {
+		switch prop.Name {
+		case "sound":
+			effects.Sound = prop.Value
+		case "voice":
+			effects.Voice = prop.Value
+		case "soundEnv":
+			effects.SoundEnv = prop.Value
+		case "soundDet":
+			effects.SoundDet = prop.Value
+		case "title":
+			effects.Title = prop.Value
+		case "titleType":
+			effects.TitleType = prop.Value
+		case "titleEffect":
+			effects.TitleEffect = prop.Value
+		case "track":
+			effects.Track = prop.Value
+		}
 	}
 }
 

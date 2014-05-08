@@ -237,9 +237,25 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 		class.Props = addMissingProps(reg, class.Props, s.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, s.class.Arrprops)
 	}
-	if s.classEffects != nil {
-		class.Classes = append(class.Classes, s.classEffects)
+	if s.Effects != nil {
+		effClass := &sqm.Class{
+			Name: "Effects",
+		}
+		class.Classes = append(class.Classes, effClass)
+		encodeEffects(s.Effects, effClass)
 	}
+}
+
+func encodeEffects(e *Effects, class *sqm.Class) {
+	reg := make(map[string]bool)
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"sound", sqm.TString, e.Sound})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"voice", sqm.TString, e.Voice})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"soundDet", sqm.TString, e.SoundDet})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"soundEnv", sqm.TString, e.SoundEnv})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"title", sqm.TString, e.Title})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"titleEffect", sqm.TString, e.TitleEffect})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"titleType", sqm.TString, e.TitleType})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"track", sqm.TString, e.Track})
 }
 
 func encodeMarkers(markers []*Marker, class *sqm.Class) {

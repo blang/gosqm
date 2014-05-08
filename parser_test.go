@@ -267,6 +267,16 @@ func TestParseSensors(t *testing.T) {
 	Convey("Given a valid sensor class", t, func() {
 		effectsClass := &sqm.Class{
 			Name: "Effects",
+			Props: []*sqm.Property{
+				&sqm.Property{"sound", sqm.TString, "sound"},
+				&sqm.Property{"voice", sqm.TString, "voice"},
+				&sqm.Property{"soundEnv", sqm.TString, "soundenv"},
+				&sqm.Property{"soundDet", sqm.TString, "sounddet"},
+				&sqm.Property{"track", sqm.TString, "track"},
+				&sqm.Property{"titleType", sqm.TString, "titletype"},
+				&sqm.Property{"title", sqm.TString, "title"},
+				&sqm.Property{"titleEffect", sqm.TString, "titleeffect"},
+			},
 		}
 		sensorClass := &sqm.Class{
 			Name: "Item0",
@@ -336,8 +346,19 @@ func TestParseSensors(t *testing.T) {
 			Convey("Pointer to class was set", func() {
 				So(s.class, ShouldPointTo, sensorClass)
 			})
-			Convey("Pointer to effects class was set", func() {
-				So(s.classEffects, ShouldPointTo, effectsClass)
+			Convey("Effects should be set", func() {
+				So(s.Effects, ShouldNotBeNil)
+				eff := s.Effects
+				Convey("All effect properties should be set", func() {
+					So(eff.Sound, ShouldEqual, "sound")
+					So(eff.Voice, ShouldEqual, "voice")
+					So(eff.SoundDet, ShouldEqual, "sounddet")
+					So(eff.SoundEnv, ShouldEqual, "soundenv")
+					So(eff.Title, ShouldEqual, "title")
+					So(eff.TitleEffect, ShouldEqual, "titleeffect")
+					So(eff.TitleType, ShouldEqual, "titletype")
+					So(eff.Track, ShouldEqual, "track")
+				})
 			})
 		})
 	})
