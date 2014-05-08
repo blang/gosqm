@@ -327,7 +327,7 @@ func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class) {
 func encodeUnit(u *Unit, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, u.Position[:]})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, u.Name})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, u.Name})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, u.Direction})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, u.Classname})
 	var leader string

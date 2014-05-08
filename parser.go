@@ -184,7 +184,7 @@ func parseGroupMember(class *sqm.Class, unit *Unit) {
 	unit.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
-		case "name":
+		case "text":
 			unit.Name = prop.Value
 		case "vehicle":
 			unit.Classname = prop.Value

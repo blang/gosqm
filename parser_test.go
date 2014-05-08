@@ -71,6 +71,7 @@ func TestParseGroups(t *testing.T) {
 		unitclass := &sqm.Class{
 			Name: "Item0",
 			Props: []*sqm.Property{
+				&sqm.Property{"text", sqm.TNumber, "name"},
 				&sqm.Property{"azimut", sqm.TNumber, "12.3"},
 				&sqm.Property{"vehicle", sqm.TString, "classname"},
 				&sqm.Property{"leader", sqm.TNumber, "1"},
@@ -133,6 +134,7 @@ func TestParseGroups(t *testing.T) {
 			unit := &Unit{}
 			parseGroupMember(unitclass, unit)
 			Convey("parsed unit should have all attributes", func() {
+				So(unit.Name, ShouldEqual, "name")
 				So(unit.Classname, ShouldEqual, "classname")
 				So(unit.Direction, ShouldEqual, "12.3")
 				So(unit.Formation, ShouldEqual, "FORM")

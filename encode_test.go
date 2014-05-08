@@ -134,7 +134,7 @@ func TestEncodeUnit(t *testing.T) {
 			encodeUnit(unit, class)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
-				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "name"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "name"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"azimut", sqm.TNumber, "0.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"skill", sqm.TNumber, "0.1"})
