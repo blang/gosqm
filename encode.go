@@ -130,10 +130,7 @@ func encodeMissionProperties(mission *Mission, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"addOns", sqm.TString, mission.Addons})
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"addOnsAuto", sqm.TString, mission.AddonsAuto})
-	if mission.class != nil {
-		class.Props = addMissingProps(reg, class.Props, mission.class.Props)
-		class.Arrprops = addMissingArrProps(reg, class.Arrprops, mission.class.Arrprops)
-	}
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"randomSeed", sqm.TNumber, mission.RandomSeed})
 }
 
 func encodeIntel(i *Intel, class *sqm.Class) {

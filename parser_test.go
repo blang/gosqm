@@ -14,13 +14,17 @@ func TestParseMission(t *testing.T) {
 				&sqm.ArrayProperty{"addOns", sqm.TString, []string{"addon1", "addon2", "addon3"}},
 				&sqm.ArrayProperty{"addOnsAuto", sqm.TString, []string{"addon4", "addon5", "addon6"}},
 			},
+			Props: []*sqm.Property{
+				&sqm.Property{"randomSeed", sqm.TNumber, "13617784"},
+			},
 		}
 		Convey("When parse addons", func() {
 			m := &Mission{}
-			parseMissionAddons(missionclass, m)
+			parseMissionProps(missionclass, m)
 			Convey("All properties are correct", func() {
 				So(m.Addons, ShouldResemble, []string{"addon1", "addon2", "addon3"})
 				So(m.AddonsAuto, ShouldResemble, []string{"addon4", "addon5", "addon6"})
+				So(m.RandomSeed, ShouldEqual, "13617784")
 			})
 		})
 	})

@@ -54,7 +54,7 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 }
 
 func parseMission(class *sqm.Class, mission *Mission) {
-	parseMissionAddons(class, mission)
+	parseMissionProps(class, mission)
 	for _, baseClass := range class.Classes {
 		switch baseClass.Name {
 		case "Intel":
@@ -72,13 +72,19 @@ func parseMission(class *sqm.Class, mission *Mission) {
 	}
 }
 
-func parseMissionAddons(class *sqm.Class, mission *Mission) {
+func parseMissionProps(class *sqm.Class, mission *Mission) {
 	for _, prop := range class.Arrprops {
 		switch prop.Name {
 		case "addOns":
 			mission.Addons = prop.Values
 		case "addOnsAuto":
 			mission.AddonsAuto = prop.Values
+		}
+	}
+	for _, prop := range class.Props {
+		switch prop.Name {
+		case "randomSeed":
+			mission.RandomSeed = prop.Value
 		}
 	}
 }

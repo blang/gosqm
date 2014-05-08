@@ -83,6 +83,7 @@ type Vehicle struct {
 type Mission struct {
 	Addons     []string
 	AddonsAuto []string
+	RandomSeed string
 	Intel      *Intel
 	Groups     []*Group
 	Vehicles   []*Vehicle
