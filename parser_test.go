@@ -350,6 +350,8 @@ func TestParseVehicles(t *testing.T) {
 				&sqm.Property{"side", sqm.TString, "EMPTY"},
 				&sqm.Property{"vehicle", sqm.TString, "HeliH"},
 				&sqm.Property{"skill", sqm.TNumber, "0.6"},
+				&sqm.Property{"presence", sqm.TNumber, "0.3"},
+				&sqm.Property{"presenceCondition", sqm.TString, "true"},
 			},
 		}
 		vehsClass := &sqm.Class{
@@ -379,6 +381,8 @@ func TestParseVehicles(t *testing.T) {
 				So(v.Side, ShouldEqual, "EMPTY")
 				So(v.Classname, ShouldEqual, "HeliH")
 				So(v.Skill, ShouldEqual, "0.6")
+				So(v.Presence, ShouldEqual, "0.3")
+				So(v.PresenceCond, ShouldEqual, "true")
 			})
 			Convey("Pointer to class was set", func() {
 				So(v.class, ShouldPointTo, vehClass)

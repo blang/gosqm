@@ -83,13 +83,15 @@ type Sensor struct {
 }
 
 type Vehicle struct {
-	Name      string
-	Position  [3]string
-	Angle     string
-	Classname string
-	Skill     string
-	class     *sqm.Class
-	Side      string //Always empty?
+	Name         string
+	Position     [3]string
+	Angle        string
+	Classname    string
+	Skill        string
+	class        *sqm.Class
+	Side         string //Always empty?
+	Presence     string
+	PresenceCond string
 }
 
 type Mission struct {

@@ -179,6 +179,8 @@ func encodeVehicle(v *Vehicle, class *sqm.Class) {
 	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
 	if v.class != nil {
 		class.Props = addMissingProps(reg, class.Props, v.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, v.class.Arrprops)

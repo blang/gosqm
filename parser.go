@@ -339,6 +339,10 @@ func parseVehicle(c *sqm.Class, veh *Vehicle) {
 			veh.Side = prop.Value
 		case "skill":
 			veh.Skill = prop.Value
+		case "presence":
+			veh.Presence = prop.Value
+		case "presenceCondition":
+			veh.PresenceCond = prop.Value
 		}
 	}
 	for _, arrprop := range c.Arrprops {

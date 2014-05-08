@@ -296,12 +296,14 @@ func TestEncodeSensor(t *testing.T) {
 func TestEncodeVehicle(t *testing.T) {
 	Convey("Given a fresh vehicle", t, func() {
 		v := &Vehicle{
-			Name:      "vehicle",
-			Position:  [3]string{"1.0", "2.0", "3.0"},
-			Angle:     "12.3",
-			Classname: "classname",
-			Skill:     "0.2",
-			Side:      "EMPTY",
+			Name:         "vehicle",
+			Position:     [3]string{"1.0", "2.0", "3.0"},
+			Angle:        "12.3",
+			Classname:    "classname",
+			Skill:        "0.2",
+			Side:         "EMPTY",
+			Presence:     "0.3",
+			PresenceCond: "true",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"missing", sqm.TString, "missing"},
@@ -318,6 +320,8 @@ func TestEncodeVehicle(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"skill", sqm.TNumber, "0.2"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "EMPTY"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"presence", sqm.TNumber, "0.3"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"presenceCondition", sqm.TString, "true"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
