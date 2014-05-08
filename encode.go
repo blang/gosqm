@@ -4,10 +4,20 @@ import (
 	"github.com/blang/gosqm/sqm"
 	"strconv"
 	"sync"
+	"sync/atomic"
 )
 
 type Encoder struct {
 	wg *sync.WaitGroup
+}
+
+type counter int32
+
+func (c *counter) inc() int32 {
+	return atomic.AddInt32((*int32)(c), 1)
+}
+func (c *counter) get() int32 {
+	return atomic.LoadInt32((*int32)(c))
 }
 
 func NewEncoder() *Encoder {
@@ -73,6 +83,7 @@ func (e *Encoder) encodeMissionFile(missionFile *MissionFile) *sqm.Class {
 }
 
 func (e *Encoder) encodeMission(mission *Mission, class *sqm.Class) {
+	var counter counter = -1
 	encodeMissionProperties(mission, class)
 	intelClass := &sqm.Class{
 		Name: "Intel",
@@ -89,7 +100,7 @@ func (e *Encoder) encodeMission(mission *Mission, class *sqm.Class) {
 	}
 	e.wg.Add(1)
 	go func() {
-		e.encodeGroups(mission.Groups, groupsClass)
+		e.encodeGroups(mission.Groups, groupsClass, &counter)
 		e.wg.Done()
 	}()
 	class.Classes = append(class.Classes, groupsClass)
@@ -119,7 +130,7 @@ func (e *Encoder) encodeMission(mission *Mission, class *sqm.Class) {
 	}
 	e.wg.Add(1)
 	go func() {
-		e.encodeVehicles(mission.Vehicles, vehsClass)
+		e.encodeVehicles(mission.Vehicles, vehsClass, &counter)
 		e.wg.Done()
 	}()
 	class.Classes = append(class.Classes, vehsClass)
@@ -156,20 +167,21 @@ func encodeIntel(i *Intel, class *sqm.Class) {
 	}
 }
 
-func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class) {
+func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class, counter *counter) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(vehs))})
 	for i, v := range vehs {
 		vehClass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
 
-		encodeVehicle(v, vehClass)
+		encodeVehicle(v, vehClass, counter)
 		class.Classes = append(class.Classes, vehClass)
 	}
 }
 
-func encodeVehicle(v *Vehicle, class *sqm.Class) {
+func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
 	reg := make(map[string]bool)
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
@@ -257,7 +269,7 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 	}
 
 }
-func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class) {
+func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class, counter *counter) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(groups))})
 	for i, g := range groups {
 		groupClass := &sqm.Class{
@@ -265,7 +277,7 @@ func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class) {
 		}
 		e.wg.Add(1)
 		go func(g *Group, groupClass *sqm.Class) {
-			e.encodeGroup(g, groupClass)
+			e.encodeGroup(g, groupClass, counter)
 			e.wg.Done()
 		}(g, groupClass)
 
@@ -273,7 +285,7 @@ func (e *Encoder) encodeGroups(groups []*Group, class *sqm.Class) {
 	}
 }
 
-func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
+func (e *Encoder) encodeGroup(g *Group, class *sqm.Class, counter *counter) {
 	reg := make(map[string]bool)
 	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, g.Side})
 	if len(g.Units) > 0 {
@@ -281,7 +293,7 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 			Name: "Vehicles",
 		}
 		groupMemberClass.Props = append(groupMemberClass.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(g.Units))})
-		e.encodeGroupMembers(g.Units, groupMemberClass)
+		e.encodeGroupMembers(g.Units, groupMemberClass, counter)
 		class.Classes = append(class.Classes, groupMemberClass)
 	}
 
@@ -300,19 +312,20 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class) {
 	}
 }
 
-func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class) {
+func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class, counter *counter) {
 	for i, unit := range units {
 		unitclass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
 
-		encodeUnit(unit, unitclass)
+		encodeUnit(unit, unitclass, counter)
 		class.Classes = append(class.Classes, unitclass)
 	}
 }
 
-func encodeUnit(u *Unit, class *sqm.Class) {
+func encodeUnit(u *Unit, class *sqm.Class, counter *counter) {
 	reg := make(map[string]bool)
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, u.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, u.Name})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, u.Direction})

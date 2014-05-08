@@ -139,11 +139,13 @@ func TestEncodeUnit(t *testing.T) {
 				},
 			},
 		}
+		var idCount counter
 		Convey("When encoding unit", func() {
 			class := &sqm.Class{}
-			encodeUnit(unit, class)
+			encodeUnit(unit, class, &idCount)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"id", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "name"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"azimut", sqm.TNumber, "0.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
@@ -310,11 +312,13 @@ func TestEncodeVehicle(t *testing.T) {
 				},
 			},
 		}
+		var idCount counter
 		Convey("When encoding vehicle", func() {
 			class := &sqm.Class{}
-			encodeVehicle(v, class)
+			encodeVehicle(v, class, &idCount)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
+				So(class.Props, ShouldContainProp, &sqm.Property{"id", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "vehicle"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"angle", sqm.TNumber, "12.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
