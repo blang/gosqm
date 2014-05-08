@@ -184,9 +184,9 @@ func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
@@ -211,9 +211,9 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, s.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, s.Name})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TNumber, s.Size[0]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TNumber, s.Size[1]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, s.Angle})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"a", sqm.TNumber, s.Size[0]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"b", sqm.TNumber, s.Size[1]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, s.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"activationBy", sqm.TString, s.ActivationBy})
 	if s.IsRectangle {
 		class.Props = addProp(reg, class.Props, &sqm.Property{"rectangular", sqm.TNumber, "1"})
@@ -224,7 +224,7 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	if s.IsInterruptible {
 		class.Props = addProp(reg, class.Props, &sqm.Property{"interruptable", sqm.TNumber, "1"})
 	}
-	class.Props = addProp(reg, class.Props, &sqm.Property{"age", sqm.TString, s.Age})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"age", sqm.TString, s.Age})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expCond", sqm.TString, s.Condition})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expActiv", sqm.TString, s.OnActivation})
 	if s.class != nil {
@@ -250,9 +250,9 @@ func encodeMarkers(markers []*Marker, class *sqm.Class) {
 func encodeMarker(m *Marker, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, m.Position[:]})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, m.Name})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"name", sqm.TString, m.Name})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"type", sqm.TString, m.Type})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"text", sqm.TString, m.Text})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, m.Text})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"markerType", sqm.TString, m.MarkerType})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"colorName", sqm.TString, m.ColorName})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fillName", sqm.TString, m.FillName})
@@ -261,8 +261,8 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 		drawBorder = "1"
 	}
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"drawBorder", sqm.TNumber, drawBorder})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"a", sqm.TNumber, m.Size[0]})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"b", sqm.TNumber, m.Size[1]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"a", sqm.TNumber, m.Size[0]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"b", sqm.TNumber, m.Size[1]})
 	if m.class != nil {
 		class.Props = addMissingProps(reg, class.Props, m.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, m.class.Arrprops)
