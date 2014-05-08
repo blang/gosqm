@@ -97,6 +97,16 @@ func TestParseGroups(t *testing.T) {
 		}
 		effectsClass := &sqm.Class{
 			Name: "Effects",
+			Props: []*sqm.Property{
+				&sqm.Property{"sound", sqm.TString, "sound"},
+				&sqm.Property{"voice", sqm.TString, "voice"},
+				&sqm.Property{"soundEnv", sqm.TString, "soundenv"},
+				&sqm.Property{"soundDet", sqm.TString, "sounddet"},
+				&sqm.Property{"track", sqm.TString, "track"},
+				&sqm.Property{"titleType", sqm.TString, "titletype"},
+				&sqm.Property{"title", sqm.TString, "title"},
+				&sqm.Property{"titleEffect", sqm.TString, "titleeffect"},
+			},
 		}
 		waypointclass := &sqm.Class{
 			Name: "Item0",
@@ -201,8 +211,19 @@ func TestParseGroups(t *testing.T) {
 			Convey("Pointer to class was set", func() {
 				So(wp.class, ShouldPointTo, waypointclass)
 			})
-			Convey("Pointer to effects class was set", func() {
-				So(wp.classEffects, ShouldPointTo, effectsClass)
+			Convey("Effects was set", func() {
+				So(wp.Effects, ShouldNotBeNil)
+				eff := wp.Effects
+				Convey("All effect properties should be set", func() {
+					So(eff.Sound, ShouldEqual, "sound")
+					So(eff.Voice, ShouldEqual, "voice")
+					So(eff.SoundDet, ShouldEqual, "sounddet")
+					So(eff.SoundEnv, ShouldEqual, "soundenv")
+					So(eff.Title, ShouldEqual, "title")
+					So(eff.TitleEffect, ShouldEqual, "titleeffect")
+					So(eff.TitleType, ShouldEqual, "titletype")
+					So(eff.Track, ShouldEqual, "track")
+				})
 			})
 		})
 	})

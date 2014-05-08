@@ -183,8 +183,15 @@ func TestEncodeWaypoint(t *testing.T) {
 					&sqm.Property{"missing", sqm.TString, "missing"},
 				},
 			},
-			classEffects: &sqm.Class{
-				Name: "Effects",
+			Effects: &Effects{
+				Sound:       "sound",
+				Voice:       "voice",
+				SoundEnv:    "soundenv",
+				SoundDet:    "sounddet",
+				Track:       "track",
+				TitleType:   "titletype",
+				Title:       "title",
+				TitleEffect: "titleeffect",
 			},
 		}
 		Convey("When encoding waypoint", func() {
@@ -198,8 +205,20 @@ func TestEncodeWaypoint(t *testing.T) {
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
 			})
-			Convey("Effects class was set", func() {
-				So(len(class.Classes), ShouldBeGreaterThan, 0)
+			Convey("Effects class should be set", func() {
+				So(len(class.Classes), ShouldEqual, 1)
+				effclass := class.Classes[0]
+				So(effclass.Name, ShouldEqual, "Effects")
+				Convey("All effect attributes should be set correctly", func() {
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"sound", sqm.TString, "sound"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"voice", sqm.TString, "voice"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"soundEnv", sqm.TString, "soundenv"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"soundDet", sqm.TString, "sounddet"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"track", sqm.TString, "track"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"titleType", sqm.TString, "titletype"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"title", sqm.TString, "title"})
+					So(effclass.Props, ShouldContainProp, &sqm.Property{"titleEffect", sqm.TString, "titleeffect"})
+				})
 			})
 		})
 	})

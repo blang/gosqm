@@ -167,8 +167,10 @@ func parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 			wp.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
 		}
 	}
-	if len(wp.class.Classes) > 0 && wp.class.Classes[0].Name == "Effects" {
-		wp.classEffects = wp.class.Classes[0]
+	if len(class.Classes) > 0 && class.Classes[0].Name == "Effects" {
+		effects := &Effects{}
+		wp.Effects = effects
+		parseEffects(class.Classes[0], effects)
 	}
 }
 

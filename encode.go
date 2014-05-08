@@ -393,8 +393,12 @@ func encodeWaypoint(w *Waypoint, class *sqm.Class) {
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, w.Position[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"type", sqm.TString, w.Type})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"showWP", sqm.TString, w.ShowWP})
-	if w.classEffects != nil {
-		class.Classes = append(class.Classes, w.classEffects)
+	if w.Effects != nil {
+		effClass := &sqm.Class{
+			Name: "Effects",
+		}
+		class.Classes = append(class.Classes, effClass)
+		encodeEffects(w.Effects, effClass)
 	}
 	if w.class != nil {
 		class.Props = addMissingProps(reg, class.Props, w.class.Props)

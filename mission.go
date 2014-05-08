@@ -22,11 +22,11 @@ type Group struct {
 }
 
 type Waypoint struct {
-	Position     [3]string
-	Type         string
-	ShowWP       string
-	class        *sqm.Class
-	classEffects *sqm.Class
+	Position [3]string
+	Type     string
+	ShowWP   string
+	Effects  *Effects
+	class    *sqm.Class
 }
 
 type Unit struct {
