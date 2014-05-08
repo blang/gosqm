@@ -8,6 +8,7 @@ import (
 
 func TestParseMission(t *testing.T) {
 	Convey("Given a fresh mission class", t, func() {
+		p := NewParser()
 		missionclass := &sqm.Class{
 			Name: "Mission",
 			Arrprops: []*sqm.ArrayProperty{
@@ -20,7 +21,7 @@ func TestParseMission(t *testing.T) {
 		}
 		Convey("When parse addons", func() {
 			m := &Mission{}
-			parseMissionProps(missionclass, m)
+			p.parseMissionProps(missionclass, m)
 			Convey("All properties are correct", func() {
 				So(m.Addons, ShouldResemble, []string{"addon1", "addon2", "addon3"})
 				So(m.AddonsAuto, ShouldResemble, []string{"addon4", "addon5", "addon6"})
@@ -32,6 +33,7 @@ func TestParseMission(t *testing.T) {
 
 func TestParseIntel(t *testing.T) {
 	Convey("Given a valid intel class", t, func() {
+		p := NewParser()
 		intelclass := &sqm.Class{
 			Name: "Intel",
 			Props: []*sqm.Property{
@@ -47,7 +49,7 @@ func TestParseIntel(t *testing.T) {
 		}
 		Convey("When parse intel", func() {
 			mission := &Mission{}
-			parseIntel(intelclass, mission)
+			p.parseIntel(intelclass, mission)
 			i := mission.Intel
 			Convey("All properties are correct", func() {
 				So(i.ResistanceWest, ShouldBeTrue)
@@ -68,6 +70,7 @@ func TestParseIntel(t *testing.T) {
 
 func TestParseGroups(t *testing.T) {
 	Convey("Given a valid groups class with subclasses", t, func() {
+		p := NewParser()
 		unitclass := &sqm.Class{
 			Name: "Item0",
 			Props: []*sqm.Property{
@@ -152,7 +155,7 @@ func TestParseGroups(t *testing.T) {
 		}
 		Convey("When parse group member", func() {
 			unit := &Unit{}
-			parseGroupMember(unitclass, unit)
+			p.parseGroupMember(unitclass, unit)
 			Convey("parsed unit should have all attributes", func() {
 				So(unit.Name, ShouldEqual, "name")
 				So(unit.Classname, ShouldEqual, "classname")
@@ -180,7 +183,7 @@ func TestParseGroups(t *testing.T) {
 		})
 		Convey("When parse groups", func() {
 			mission := &Mission{}
-			parseGroups(groupsclass, mission)
+			p.parseGroups(groupsclass, mission)
 			Convey("Mission has one group", func() {
 				So(len(mission.Groups), ShouldEqual, 1)
 			})
@@ -194,7 +197,7 @@ func TestParseGroups(t *testing.T) {
 		})
 		Convey("When parse group", func() {
 			group := &Group{}
-			parseGroup(groupclass, group)
+			p.parseGroup(groupclass, group)
 
 			Convey("Group has one waypoint", func() {
 				So(len(group.Waypoints), ShouldEqual, 1)
@@ -202,7 +205,7 @@ func TestParseGroups(t *testing.T) {
 		})
 		Convey("When parse waypoint", func() {
 			wp := &Waypoint{}
-			parseGroupWaypoint(waypointclass, wp)
+			p.parseGroupWaypoint(waypointclass, wp)
 			Convey("All properties are correct", func() {
 				So(wp.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
 				So(wp.Type, ShouldEqual, "AND")
@@ -232,6 +235,7 @@ func TestParseGroups(t *testing.T) {
 func TestParseMarkers(t *testing.T) {
 
 	Convey("Given a set of valid marker classes", t, func() {
+		p := NewParser()
 		markerClass := &sqm.Class{
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
@@ -256,7 +260,7 @@ func TestParseMarkers(t *testing.T) {
 		}
 		Convey("When parse markers", func() {
 			mission := &Mission{}
-			parseMarkers(markersClass, mission)
+			p.parseMarkers(markersClass, mission)
 			Convey("Mission has one marker", func() {
 				So(len(mission.Markers), ShouldEqual, 1)
 			})
@@ -266,7 +270,7 @@ func TestParseMarkers(t *testing.T) {
 		})
 		Convey("When parse single marker", func() {
 			m := &Marker{}
-			parseMarker(markerClass, m)
+			p.parseMarker(markerClass, m)
 			Convey("All properties are correct", func() {
 				So(m.Name, ShouldEqual, "m1")
 				So(m.MarkerType, ShouldEqual, "ELLIPSE")
@@ -286,6 +290,7 @@ func TestParseMarkers(t *testing.T) {
 
 func TestParseSensors(t *testing.T) {
 	Convey("Given a valid sensor class", t, func() {
+		p := NewParser()
 		effectsClass := &sqm.Class{
 			Name: "Effects",
 			Props: []*sqm.Property{
@@ -334,7 +339,7 @@ func TestParseSensors(t *testing.T) {
 
 		Convey("When parse sensors", func() {
 			mission := &Mission{}
-			parseSensors(sensorsClass, mission)
+			p.parseSensors(sensorsClass, mission)
 			Convey("Mission has one sensor", func() {
 				So(len(mission.Sensors), ShouldEqual, 1)
 			})
@@ -344,7 +349,7 @@ func TestParseSensors(t *testing.T) {
 		})
 		Convey("When parse single sensor", func() {
 			s := &Sensor{}
-			parseSensor(sensorClass, s)
+			p.parseSensor(sensorClass, s)
 			Convey("All properties are correct", func() {
 				So(s.Name, ShouldEqual, "s1")
 				So(s.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
@@ -386,13 +391,8 @@ func TestParseSensors(t *testing.T) {
 }
 
 func TestParseVehicles(t *testing.T) {
-	// position[]={8067.7783,296.04001,1909.3773};
-	//      azimut=234.35667;
-	//      id=74;
-	//      side="EMPTY";
-	//      vehicle="HeliH";
-	//      skill=0.60000002;
 	Convey("Given a valid vehicle class", t, func() {
+		p := NewParser()
 		vehClass := &sqm.Class{
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
@@ -417,7 +417,7 @@ func TestParseVehicles(t *testing.T) {
 
 		Convey("When parse sensors", func() {
 			mission := &Mission{}
-			parseVehicles(vehsClass, mission)
+			p.parseVehicles(vehsClass, mission)
 			Convey("Mission has one vehicle", func() {
 				So(len(mission.Vehicles), ShouldEqual, 1)
 			})
@@ -427,7 +427,7 @@ func TestParseVehicles(t *testing.T) {
 		})
 		Convey("When parse single vehicle", func() {
 			v := &Vehicle{}
-			parseVehicle(vehClass, v)
+			p.parseVehicle(vehClass, v)
 			Convey("All properties are correct", func() {
 				So(v.Name, ShouldEqual, "s1")
 				So(v.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})

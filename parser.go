@@ -7,7 +7,8 @@ import (
 )
 
 type Parser struct {
-	wg *sync.WaitGroup
+	wg      *sync.WaitGroup
+	errChan chan error
 }
 
 func NewParser() *Parser {
@@ -37,13 +38,13 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 	for _, stage := range class.Classes {
 		switch stage.Name {
 		case "Intro":
-			parseMission(stage, mf.Intro)
+			p.parseMission(stage, mf.Intro)
 		case "Mission":
-			parseMission(stage, mf.Mission)
+			p.parseMission(stage, mf.Mission)
 		case "OutroWin":
-			parseMission(stage, mf.OutroWin)
+			p.parseMission(stage, mf.OutroWin)
 		case "OutroLoose":
-			parseMission(stage, mf.OutroLoose)
+			p.parseMission(stage, mf.OutroLoose)
 
 		default:
 			return nil, fmt.Errorf("Unrecognized base class %s", stage.Name)
@@ -53,26 +54,26 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 	return mf, nil
 }
 
-func parseMission(class *sqm.Class, mission *Mission) {
-	parseMissionProps(class, mission)
+func (p *Parser) parseMission(class *sqm.Class, mission *Mission) {
+	p.parseMissionProps(class, mission)
 	for _, baseClass := range class.Classes {
 		switch baseClass.Name {
 		case "Intel":
-			parseIntel(baseClass, mission)
+			p.parseIntel(baseClass, mission)
 		case "Groups":
-			parseGroups(baseClass, mission)
+			p.parseGroups(baseClass, mission)
 		case "Markers":
-			parseMarkers(baseClass, mission)
+			p.parseMarkers(baseClass, mission)
 		case "Sensors":
-			parseSensors(baseClass, mission)
+			p.parseSensors(baseClass, mission)
 		case "Vehicles":
-			parseVehicles(baseClass, mission)
+			p.parseVehicles(baseClass, mission)
 		}
 
 	}
 }
 
-func parseMissionProps(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseMissionProps(class *sqm.Class, mission *Mission) {
 	for _, prop := range class.Arrprops {
 		switch prop.Name {
 		case "addOns":
@@ -89,7 +90,7 @@ func parseMissionProps(class *sqm.Class, mission *Mission) {
 	}
 }
 
-func parseIntel(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseIntel(class *sqm.Class, mission *Mission) {
 	intel := &Intel{}
 	intel.class = class
 	for _, prop := range class.Props {
@@ -115,17 +116,17 @@ func parseIntel(class *sqm.Class, mission *Mission) {
 	mission.Intel = intel
 }
 
-func parseGroups(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseGroups(class *sqm.Class, mission *Mission) {
 	for _, groupClass := range class.Classes {
 		group := &Group{}
 
 		mission.Groups = append(mission.Groups, group)
-		parseGroup(groupClass, group)
+		p.parseGroup(groupClass, group)
 	}
 }
 
 //TODO: Cross Side grouping possible in editor?
-func parseGroup(class *sqm.Class, group *Group) {
+func (p *Parser) parseGroup(class *sqm.Class, group *Group) {
 	group.class = class
 	//parse side
 	for _, prop := range class.Props {
@@ -136,22 +137,22 @@ func parseGroup(class *sqm.Class, group *Group) {
 	for _, subclass := range class.Classes {
 		switch subclass.Name {
 		case "Vehicles":
-			parseGroupMembers(subclass, group)
+			p.parseGroupMembers(subclass, group)
 		case "Waypoints":
-			parseGroupWaypoints(subclass, group)
+			p.parseGroupWaypoints(subclass, group)
 		}
 	}
 }
 
-func parseGroupWaypoints(class *sqm.Class, group *Group) {
+func (p *Parser) parseGroupWaypoints(class *sqm.Class, group *Group) {
 	for _, wpClass := range class.Classes {
 		wp := &Waypoint{}
 		group.Waypoints = append(group.Waypoints, wp)
-		parseGroupWaypoint(wpClass, wp)
+		p.parseGroupWaypoint(wpClass, wp)
 	}
 }
 
-func parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
+func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 	wp.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
@@ -170,19 +171,19 @@ func parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 	if len(class.Classes) > 0 && class.Classes[0].Name == "Effects" {
 		effects := &Effects{}
 		wp.Effects = effects
-		parseEffects(class.Classes[0], effects)
+		p.parseEffects(class.Classes[0], effects)
 	}
 }
 
-func parseGroupMembers(class *sqm.Class, group *Group) {
+func (p *Parser) parseGroupMembers(class *sqm.Class, group *Group) {
 	for _, unitClass := range class.Classes {
 		unit := &Unit{}
 		group.Units = append(group.Units, unit)
-		parseGroupMember(unitClass, unit)
+		p.parseGroupMember(unitClass, unit)
 	}
 }
 
-func parseGroupMember(class *sqm.Class, unit *Unit) {
+func (p *Parser) parseGroupMember(class *sqm.Class, unit *Unit) {
 	unit.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
@@ -232,15 +233,15 @@ func parseGroupMember(class *sqm.Class, unit *Unit) {
 	}
 }
 
-func parseMarkers(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseMarkers(class *sqm.Class, mission *Mission) {
 	for _, markerClass := range class.Classes {
 		marker := &Marker{}
 		mission.Markers = append(mission.Markers, marker)
-		parseMarker(markerClass, marker)
+		p.parseMarker(markerClass, marker)
 	}
 }
 
-func parseMarker(c *sqm.Class, marker *Marker) {
+func (p *Parser) parseMarker(c *sqm.Class, marker *Marker) {
 	marker.class = c
 	for _, prop := range c.Props {
 		switch prop.Name {
@@ -272,15 +273,15 @@ func parseMarker(c *sqm.Class, marker *Marker) {
 	}
 }
 
-func parseSensors(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseSensors(class *sqm.Class, mission *Mission) {
 	for _, sensorClass := range class.Classes {
 		sensor := &Sensor{}
 		mission.Sensors = append(mission.Sensors, sensor)
-		parseSensor(sensorClass, sensor)
+		p.parseSensor(sensorClass, sensor)
 	}
 }
 
-func parseSensor(c *sqm.Class, sensor *Sensor) {
+func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 	sensor.class = c
 	for _, prop := range c.Props {
 		switch prop.Name {
@@ -329,11 +330,11 @@ func parseSensor(c *sqm.Class, sensor *Sensor) {
 	if len(c.Classes) > 0 && c.Classes[0].Name == "Effects" {
 		effects := &Effects{}
 		sensor.Effects = effects
-		parseEffects(c.Classes[0], effects)
+		p.parseEffects(c.Classes[0], effects)
 	}
 }
 
-func parseEffects(c *sqm.Class, effects *Effects) {
+func (p *Parser) parseEffects(c *sqm.Class, effects *Effects) {
 	for _, prop := range c.Props {
 		switch prop.Name {
 		case "sound":
@@ -356,15 +357,15 @@ func parseEffects(c *sqm.Class, effects *Effects) {
 	}
 }
 
-func parseVehicles(class *sqm.Class, mission *Mission) {
+func (p *Parser) parseVehicles(class *sqm.Class, mission *Mission) {
 	for _, vehClass := range class.Classes {
 		veh := &Vehicle{}
 		mission.Vehicles = append(mission.Vehicles, veh)
-		parseVehicle(vehClass, veh)
+		p.parseVehicle(vehClass, veh)
 	}
 }
 
-func parseVehicle(c *sqm.Class, veh *Vehicle) {
+func (p *Parser) parseVehicle(c *sqm.Class, veh *Vehicle) {
 	veh.class = c
 	for _, prop := range c.Props {
 		switch prop.Name {
