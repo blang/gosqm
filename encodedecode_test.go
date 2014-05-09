@@ -1,4 +1,4 @@
-package mission
+package gosqm
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package mission
+package gosqm
 
 type MissionFile struct {
 	Version    string
