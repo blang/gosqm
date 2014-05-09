@@ -6,10 +6,31 @@ import (
 	"sync"
 )
 
+type Context string
+
+func (c Context) String() string {
+	return string(c)
+}
+
+const (
+	ContextUnit            Context = "Unit"
+	ContextMission                 = "Mission"
+	ContextMissionFile             = "MissionFile"
+	ContextIntel                   = "Intel"
+	ContextGroup                   = "Group"
+	ContextWaypoint                = "Waypoint"
+	ContextWaypointEffects         = "WaypointEffects"
+	ContextMarker                  = "Marker"
+	ContextSensor                  = "Sensor"
+	ContextSensorEffects           = "SensorEffects"
+	ContextVehicle                 = "Vehicle"
+)
+
 type UnkownPropertyError struct {
 	ParentClass   *sqm.Class
 	Property      *sqm.Property
 	ArrayProperty *sqm.ArrayProperty
+	Context       Context
 }
 
 func (e *UnkownPropertyError) Error() string {
@@ -20,7 +41,7 @@ func (e *UnkownPropertyError) Error() string {
 		propName = e.ArrayProperty.Name
 	}
 	if propName != "" && e.ParentClass != nil {
-		return "Unknown property " + propName + " in class " + e.ParentClass.Name
+		return "Unknown property " + propName + " in class " + e.ParentClass.Name + " in context " + e.Context.String()
 	} else {
 		return "Unkown property"
 	}
@@ -29,11 +50,12 @@ func (e *UnkownPropertyError) Error() string {
 type UnkownClassError struct {
 	ParentClass *sqm.Class
 	Class       *sqm.Class
+	Context     Context
 }
 
 func (e *UnkownClassError) Error() string {
 	if e.ParentClass != nil && e.Class != nil {
-		return "Unknown class " + e.Class.Name + " in class " + e.ParentClass.Name
+		return "Unknown class " + e.Class.Name + " in class " + e.ParentClass.Name + " in context " + e.Context.String()
 	} else {
 		return "Unkown property"
 	}
@@ -85,6 +107,7 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 			p.saveError(&UnkownClassError{
 				ParentClass: class,
 				Class:       stage,
+				Context:     ContextMissionFile,
 			})
 		}
 	}
@@ -118,6 +141,7 @@ func (p *Parser) parseMission(class *sqm.Class, mission *Mission) {
 			p.saveError(&UnkownClassError{
 				ParentClass: class,
 				Class:       baseClass,
+				Context:     ContextMission,
 			})
 		}
 
@@ -135,6 +159,7 @@ func (p *Parser) parseMissionProps(class *sqm.Class, mission *Mission) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   class,
 				ArrayProperty: prop,
+				Context:       ContextMission,
 			})
 		}
 	}
@@ -146,6 +171,7 @@ func (p *Parser) parseMissionProps(class *sqm.Class, mission *Mission) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: class,
 				Property:    prop,
+				Context:     ContextMission,
 			})
 		}
 	}
@@ -176,6 +202,7 @@ func (p *Parser) parseIntel(class *sqm.Class, mission *Mission) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: class,
 				Property:    prop,
+				Context:     ContextIntel,
 			})
 		}
 	}
@@ -196,9 +223,17 @@ func (p *Parser) parseGroup(class *sqm.Class, group *Group) {
 	group.class = class
 	//parse side
 	for _, prop := range class.Props {
-		if prop.Name == "side" {
+		switch prop.Name {
+		case "side":
 			group.Side = prop.Value
+		default:
+			p.saveError(&UnkownPropertyError{
+				ParentClass: class,
+				Property:    prop,
+				Context:     ContextGroup,
+			})
 		}
+
 	}
 	for _, subclass := range class.Classes {
 		switch subclass.Name {
@@ -210,6 +245,7 @@ func (p *Parser) parseGroup(class *sqm.Class, group *Group) {
 			p.saveError(&UnkownClassError{
 				ParentClass: class,
 				Class:       subclass,
+				Context:     ContextGroup,
 			})
 		}
 	}
@@ -235,6 +271,7 @@ func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: class,
 				Property:    prop,
+				Context:     ContextWaypoint,
 			})
 		}
 	}
@@ -246,6 +283,7 @@ func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   class,
 				ArrayProperty: arrprop,
+				Context:       ContextWaypoint,
 			})
 		}
 	}
@@ -260,6 +298,7 @@ func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 				p.saveError(&UnkownClassError{
 					ParentClass: class,
 					Class:       subclass,
+					Context:     ContextWaypointEffects,
 				})
 			}
 		}
@@ -322,6 +361,7 @@ func (p *Parser) parseGroupMember(class *sqm.Class, unit *Unit) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: class,
 				Property:    prop,
+				Context:     ContextUnit,
 			})
 		}
 	}
@@ -333,6 +373,7 @@ func (p *Parser) parseGroupMember(class *sqm.Class, unit *Unit) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   class,
 				ArrayProperty: arrprop,
+				Context:       ContextUnit,
 			})
 		}
 	}
@@ -372,6 +413,7 @@ func (p *Parser) parseMarker(c *sqm.Class, marker *Marker) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,
 				Property:    prop,
+				Context:     ContextMarker,
 			})
 		}
 	}
@@ -383,6 +425,7 @@ func (p *Parser) parseMarker(c *sqm.Class, marker *Marker) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   c,
 				ArrayProperty: arrprop,
+				Context:       ContextMarker,
 			})
 		}
 	}
@@ -438,6 +481,7 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,
 				Property:    prop,
+				Context:     ContextSensor,
 			})
 		}
 	}
@@ -449,6 +493,7 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   c,
 				ArrayProperty: arrprop,
+				Context:       ContextSensor,
 			})
 		}
 	}
@@ -463,6 +508,7 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 				p.saveError(&UnkownClassError{
 					ParentClass: c,
 					Class:       subclass,
+					Context:     ContextSensor,
 				})
 			}
 		}
@@ -492,6 +538,7 @@ func (p *Parser) parseEffects(c *sqm.Class, effects *Effects) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,
 				Property:    prop,
+				Context:     ContextSensorEffects,
 			})
 		}
 	}
@@ -529,6 +576,7 @@ func (p *Parser) parseVehicle(c *sqm.Class, veh *Vehicle) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,
 				Property:    prop,
+				Context:     ContextVehicle,
 			})
 		}
 	}
@@ -540,6 +588,7 @@ func (p *Parser) parseVehicle(c *sqm.Class, veh *Vehicle) {
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   c,
 				ArrayProperty: arrprop,
+				Context:       ContextVehicle,
 			})
 		}
 	}
