@@ -394,6 +394,8 @@ func (p *Parser) parseMarker(c *sqm.Class, marker *Marker) {
 		switch prop.Name {
 		case "name":
 			marker.Name = prop.Value
+		case "angle":
+			marker.Angle = prop.Value
 		case "text":
 			marker.Text = prop.Value
 		case "type":

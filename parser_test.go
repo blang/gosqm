@@ -264,6 +264,7 @@ func TestParseMarkers(t *testing.T) {
 			},
 			Props: []*sqm.Property{
 				&sqm.Property{"name", sqm.TString, "m1"},
+				&sqm.Property{"angle", sqm.TNumber, "38.1"},
 				&sqm.Property{"markerType", sqm.TString, "ELLIPSE"},
 				&sqm.Property{"type", sqm.TString, "Empty"},
 				&sqm.Property{"colorName", sqm.TString, "ColorRed"},
@@ -294,6 +295,7 @@ func TestParseMarkers(t *testing.T) {
 			p.parseMarker(markerClass, m)
 			Convey("All properties are correct", func() {
 				So(m.Name, ShouldEqual, "m1")
+				So(m.Angle, ShouldEqual, "38.1")
 				So(m.MarkerType, ShouldEqual, "ELLIPSE")
 				So(m.Type, ShouldEqual, "Empty")
 				So(m.ColorName, ShouldEqual, "ColorRed")

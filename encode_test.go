@@ -232,6 +232,7 @@ func TestEncodeMarker(t *testing.T) {
 	Convey("Given fresh marker", t, func() {
 		m := &Marker{
 			Name:       "marker",
+			Angle:      "38.1",
 			Position:   [3]string{"1.0", "2.0", "3.0"},
 			Type:       "Empty",
 			MarkerType: "ELLIPSE",
@@ -252,6 +253,7 @@ func TestEncodeMarker(t *testing.T) {
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "marker"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"angle", sqm.TNumber, "38.1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "Empty"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"markerType", sqm.TString, "ELLIPSE"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "text"})

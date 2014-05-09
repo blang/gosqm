@@ -55,9 +55,9 @@ type Vehicle struct {
 }
 
 type Marker struct {
-	Name     string
-	Position [3]string
-	// Angle      string //TODO: Angle?
+	Name       string
+	Position   [3]string
+	Angle      string
 	Type       string
 	MarkerType string
 	Text       string

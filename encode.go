@@ -263,6 +263,7 @@ func encodeMarker(m *Marker, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, m.Position[:]})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"name", sqm.TString, m.Name})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, m.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"type", sqm.TString, m.Type})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, m.Text})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"markerType", sqm.TString, m.MarkerType})
