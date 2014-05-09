@@ -209,6 +209,7 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"timeoutMid", sqm.TNumber, s.TimeoutMid})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"timeoutMax", sqm.TNumber, s.TimeoutMax})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"type", sqm.TString, s.Type})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, s.Text})
 	if s.IsRectangle {
 		class.Props = addProp(reg, class.Props, &sqm.Property{"rectangular", sqm.TNumber, "1"})
 	}

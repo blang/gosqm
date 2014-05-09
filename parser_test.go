@@ -348,6 +348,7 @@ func TestParseSensors(t *testing.T) {
 				&sqm.Property{"expCond", sqm.TString, "isServer"},
 				&sqm.Property{"expActiv", sqm.TString, "hint a1"},
 				&sqm.Property{"expDesactiv", sqm.TString, "hint a2"},
+				&sqm.Property{"text", sqm.TString, "triggertext"},
 			},
 			Classes: []*sqm.Class{effectsClass},
 		}
@@ -389,6 +390,7 @@ func TestParseSensors(t *testing.T) {
 				So(s.Condition, ShouldEqual, "isServer")
 				So(s.OnActivation, ShouldEqual, "hint a1")
 				So(s.OnDeactivation, ShouldEqual, "hint a2")
+				So(s.Text, ShouldEqual, "triggertext")
 			})
 			Convey("Pointer to class was set", func() {
 				So(s.class, ShouldPointTo, sensorClass)

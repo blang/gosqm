@@ -86,6 +86,7 @@ type Sensor struct {
 	OnActivation    string
 	OnDeactivation  string
 	IsInterruptible bool
+	Text            string
 	Effects         *Effects
 	class           *sqm.Class
 }

@@ -478,6 +478,8 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 			sensor.OnDeactivation = prop.Value
 		case "interruptable":
 			sensor.IsInterruptible = prop.Value == "1"
+		case "text":
+			sensor.Text = prop.Value
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,

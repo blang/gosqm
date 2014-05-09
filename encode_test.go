@@ -287,6 +287,7 @@ func TestEncodeSensor(t *testing.T) {
 			Condition:       "isServer",
 			OnActivation:    "hint test",
 			OnDeactivation:  "hint test2",
+			Text:            "triggertext",
 			IsInterruptible: true,
 			Effects: &Effects{
 				Sound:       "sound",
@@ -326,6 +327,7 @@ func TestEncodeSensor(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"expActiv", sqm.TString, "hint test"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"expDesactiv", sqm.TString, "hint test2"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"interruptable", sqm.TNumber, "1"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "triggertext"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
