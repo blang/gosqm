@@ -16,7 +16,7 @@ type MissionFile struct {
 type Group struct {
 	Side      string
 	Waypoints []*Waypoint
-	Units     []*Unit
+	Units     []*Vehicle
 	class     *sqm.Class
 	// Leader    *Unit
 }
@@ -29,28 +29,29 @@ type Waypoint struct {
 	class    *sqm.Class
 }
 
-type Unit struct {
-	Name         string
-	Position     [3]string
-	Direction    string
-	Classname    string
-	Skill        string
-	Special      string
-	IsLeader     bool
-	Player       string
-	Description  string
-	Presence     string
-	PresenceCond string
-	Placement    string
-	Age          string
-	Lock         string
-	Rank         string
-	Health       string
-	Fuel         string
-	Ammo         string
-	Init         string
-	Side         string
-	class        *sqm.Class
+type Vehicle struct {
+	Name                string
+	Position            [3]string
+	Angle               string
+	Classname           string
+	Skill               string
+	Special             string
+	IsLeader            bool
+	Player              string
+	Description         string
+	Presence            string
+	PresenceCond        string
+	Placement           string
+	Age                 string
+	Lock                string
+	Rank                string
+	Health              string
+	Fuel                string
+	Ammo                string
+	Init                string
+	Side                string
+	ForceHeadlessClient bool
+	class               *sqm.Class
 }
 
 type Marker struct {
@@ -100,19 +101,6 @@ type Effects struct {
 	TitleEffect string
 }
 
-type Vehicle struct {
-	Name         string
-	Position     [3]string
-	Angle        string
-	Classname    string
-	Skill        string
-	class        *sqm.Class
-	Side         string //Always empty?
-	Presence     string
-	PresenceCond string
-	Special      string
-}
-
 type Mission struct {
 	Addons     []string
 	AddonsAuto []string
@@ -136,9 +124,3 @@ type Intel struct {
 	Minute          string
 	class           *sqm.Class
 }
-
-//intel
-//groups
-//vehicles
-//markers
-//trigger

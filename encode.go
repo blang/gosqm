@@ -179,28 +179,6 @@ func (e *Encoder) encodeVehicles(vehs []*Vehicle, class *sqm.Class, counter *cou
 	}
 }
 
-func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
-	reg := make(map[string]bool)
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
-	if v.Side == "" {
-		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, "EMPTY"})
-	} else {
-		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
-	}
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, v.Special})
-	if v.class != nil {
-		class.Props = addMissingProps(reg, class.Props, v.class.Props)
-		class.Arrprops = addMissingArrProps(reg, class.Arrprops, v.class.Arrprops)
-	}
-}
-
 func encodeSensors(sensors []*Sensor, class *sqm.Class) {
 	class.Props = append(class.Props, &sqm.Property{"items", sqm.TNumber, strconv.Itoa(len(sensors))})
 	for i, s := range sensors {
@@ -339,50 +317,80 @@ func (e *Encoder) encodeGroup(g *Group, class *sqm.Class, counter *counter) {
 	}
 }
 
-func (e *Encoder) encodeGroupMembers(units []*Unit, class *sqm.Class, counter *counter) {
+func (e *Encoder) encodeGroupMembers(units []*Vehicle, class *sqm.Class, counter *counter) {
 	for i, unit := range units {
 		unitclass := &sqm.Class{
 			Name: "Item" + strconv.Itoa(i),
 		}
 
-		encodeUnit(unit, unitclass, counter)
+		encodeVehicle(unit, unitclass, counter)
 		class.Classes = append(class.Classes, unitclass)
 	}
 }
 
-func encodeUnit(u *Unit, class *sqm.Class, counter *counter) {
+func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
 	reg := make(map[string]bool)
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
-	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, u.Position[:]})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, u.Name})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, u.Direction})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, u.Classname})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, v.Name})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, v.Angle})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
 	var leader string
-	if u.IsLeader {
+	if v.IsLeader {
 		leader = "1"
 	}
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"leader", sqm.TNumber, leader})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, u.Special})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, u.Skill})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"player", sqm.TString, u.Player})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"description", sqm.TString, u.Description})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, u.Presence})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, u.PresenceCond})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"placement", sqm.TNumber, u.Placement})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"age", sqm.TString, u.Age})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"lock", sqm.TString, u.Lock})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"rank", sqm.TString, u.Rank})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"health", sqm.TNumber, u.Health})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fuel", sqm.TNumber, u.Fuel})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"ammo", sqm.TNumber, u.Ammo})
-	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"init", sqm.TString, u.Init})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, u.Side})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, v.Special})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"player", sqm.TString, v.Player})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"description", sqm.TString, v.Description})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"placement", sqm.TNumber, v.Placement})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"age", sqm.TString, v.Age})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"lock", sqm.TString, v.Lock})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"rank", sqm.TString, v.Rank})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"health", sqm.TNumber, v.Health})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fuel", sqm.TNumber, v.Fuel})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"ammo", sqm.TNumber, v.Ammo})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"init", sqm.TString, v.Init})
+	if v.Side == "" {
+		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, "EMPTY"})
+	} else {
+		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+	}
 
-	if u.class != nil {
-		class.Props = addMissingProps(reg, class.Props, u.class.Props)
-		class.Arrprops = addMissingArrProps(reg, class.Arrprops, u.class.Arrprops)
+	if v.ForceHeadlessClient {
+		class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"forceHeadlessClient", sqm.TNumber, "1"})
+	}
+
+	if v.class != nil {
+		class.Props = addMissingProps(reg, class.Props, v.class.Props)
+		class.Arrprops = addMissingArrProps(reg, class.Arrprops, v.class.Arrprops)
 	}
 }
+
+// func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
+// 	reg := make(map[string]bool)
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
+// 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, v.Name})
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
+// 	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
+// 	if v.Side == "" {
+// 		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, "EMPTY"})
+// 	} else {
+// 		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+// 	}
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
+// 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"special", sqm.TString, v.Special})
+// 	if v.class != nil {
+// 		class.Props = addMissingProps(reg, class.Props, v.class.Props)
+// 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, v.class.Arrprops)
+// 	}
+// }
 
 func encodeWaypoints(waypoints []*Waypoint, class *sqm.Class) {
 	for i, waypoint := range waypoints {

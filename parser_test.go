@@ -75,24 +75,6 @@ func TestParseGroups(t *testing.T) {
 			Name: "Item0",
 			Props: []*sqm.Property{
 				&sqm.Property{"text", sqm.TNumber, "name"},
-				&sqm.Property{"azimut", sqm.TNumber, "12.3"},
-				&sqm.Property{"vehicle", sqm.TString, "classname"},
-				&sqm.Property{"leader", sqm.TNumber, "1"},
-				&sqm.Property{"special", sqm.TString, "FORM"},
-				&sqm.Property{"skill", sqm.TNumber, "0.60000002"},
-				&sqm.Property{"player", sqm.TString, "PLAYER COMMANDER"},
-				&sqm.Property{"description", sqm.TString, "Description"},
-				&sqm.Property{"presence", sqm.TNumber, "0.3"},
-				&sqm.Property{"presenceCondition", sqm.TString, "true"},
-				&sqm.Property{"placement", sqm.TNumber, "20"},
-				&sqm.Property{"age", sqm.TString, "5 MIN"},
-				&sqm.Property{"lock", sqm.TString, "UNLOCKED"},
-				&sqm.Property{"rank", sqm.TString, "CORPORAL"},
-				&sqm.Property{"health", sqm.TNumber, "0.1"},
-				&sqm.Property{"fuel", sqm.TNumber, "0.2"},
-				&sqm.Property{"ammo", sqm.TNumber, "0.3"},
-				&sqm.Property{"init", sqm.TString, "hint a"},
-				&sqm.Property{"side", sqm.TString, "WEST"},
 			},
 
 			Arrprops: []*sqm.ArrayProperty{
@@ -154,35 +136,6 @@ func TestParseGroups(t *testing.T) {
 				groupclass,
 			},
 		}
-		Convey("When parse group member", func() {
-			unit := &Unit{}
-			p.parseGroupMember(unitclass, unit)
-			Convey("parsed unit should have all attributes", func() {
-				So(unit.Name, ShouldEqual, "name")
-				So(unit.Classname, ShouldEqual, "classname")
-				So(unit.Direction, ShouldEqual, "12.3")
-				So(unit.Special, ShouldEqual, "FORM")
-				So(unit.IsLeader, ShouldBeTrue)
-				So(unit.Skill, ShouldEqual, "0.60000002")
-				So(unit.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
-				So(unit.Player, ShouldEqual, "PLAYER COMMANDER")
-				So(unit.Description, ShouldEqual, "Description")
-				So(unit.Presence, ShouldEqual, "0.3")
-				So(unit.PresenceCond, ShouldEqual, "true")
-				So(unit.Placement, ShouldEqual, "20")
-				So(unit.Age, ShouldEqual, "5 MIN")
-				So(unit.Lock, ShouldEqual, "UNLOCKED")
-				So(unit.Rank, ShouldEqual, "CORPORAL")
-				So(unit.Health, ShouldEqual, "0.1")
-				So(unit.Fuel, ShouldEqual, "0.2")
-				So(unit.Ammo, ShouldEqual, "0.3")
-				So(unit.Init, ShouldEqual, "hint a")
-				So(unit.Side, ShouldEqual, "WEST")
-			})
-			Convey("Pointer to class was set", func() {
-				So(unit.class, ShouldPointTo, unitclass)
-			})
-		})
 		Convey("When parse groups", func() {
 			mission := &Mission{}
 			p.parseGroups(groupsclass, mission)
@@ -231,6 +184,72 @@ func TestParseGroups(t *testing.T) {
 				})
 			})
 		})
+	})
+}
+
+func TestParseVehicle(t *testing.T) {
+	Convey("Given a fresh parser and a vehicle class", t, func() {
+		p := NewParser()
+		vehclass := &sqm.Class{
+			Name: "Item0",
+			Props: []*sqm.Property{
+				&sqm.Property{"text", sqm.TNumber, "name"},
+				&sqm.Property{"azimut", sqm.TNumber, "12.3"},
+				&sqm.Property{"vehicle", sqm.TString, "classname"},
+				&sqm.Property{"leader", sqm.TNumber, "1"},
+				&sqm.Property{"special", sqm.TString, "FORM"},
+				&sqm.Property{"skill", sqm.TNumber, "0.60000002"},
+				&sqm.Property{"player", sqm.TString, "PLAYER COMMANDER"},
+				&sqm.Property{"description", sqm.TString, "Description"},
+				&sqm.Property{"presence", sqm.TNumber, "0.3"},
+				&sqm.Property{"presenceCondition", sqm.TString, "true"},
+				&sqm.Property{"placement", sqm.TNumber, "20"},
+				&sqm.Property{"age", sqm.TString, "5 MIN"},
+				&sqm.Property{"lock", sqm.TString, "UNLOCKED"},
+				&sqm.Property{"rank", sqm.TString, "CORPORAL"},
+				&sqm.Property{"health", sqm.TNumber, "0.1"},
+				&sqm.Property{"fuel", sqm.TNumber, "0.2"},
+				&sqm.Property{"ammo", sqm.TNumber, "0.3"},
+				&sqm.Property{"init", sqm.TString, "hint a"},
+				&sqm.Property{"side", sqm.TString, "WEST"},
+				&sqm.Property{"forceHeadlessClient", sqm.TNumber, "1"},
+			},
+
+			Arrprops: []*sqm.ArrayProperty{
+				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
+			},
+		}
+		Convey("When parse vehicle", func() {
+			veh := &Vehicle{}
+			p.parseVehicle(vehclass, veh)
+			Convey("All properties are correct", func() {
+				So(veh.Name, ShouldEqual, "name")
+				So(veh.Classname, ShouldEqual, "classname")
+				So(veh.Angle, ShouldEqual, "12.3")
+				So(veh.Special, ShouldEqual, "FORM")
+				So(veh.IsLeader, ShouldBeTrue)
+				So(veh.Skill, ShouldEqual, "0.60000002")
+				So(veh.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+				So(veh.Player, ShouldEqual, "PLAYER COMMANDER")
+				So(veh.Description, ShouldEqual, "Description")
+				So(veh.Presence, ShouldEqual, "0.3")
+				So(veh.PresenceCond, ShouldEqual, "true")
+				So(veh.Placement, ShouldEqual, "20")
+				So(veh.Age, ShouldEqual, "5 MIN")
+				So(veh.Lock, ShouldEqual, "UNLOCKED")
+				So(veh.Rank, ShouldEqual, "CORPORAL")
+				So(veh.Health, ShouldEqual, "0.1")
+				So(veh.Fuel, ShouldEqual, "0.2")
+				So(veh.Ammo, ShouldEqual, "0.3")
+				So(veh.Init, ShouldEqual, "hint a")
+				So(veh.Side, ShouldEqual, "WEST")
+				So(veh.ForceHeadlessClient, ShouldBeTrue)
+			})
+			Convey("Pointer to class was set", func() {
+				So(veh.class, ShouldPointTo, vehclass)
+			})
+		})
+
 	})
 }
 
@@ -401,14 +420,7 @@ func TestParseVehicles(t *testing.T) {
 				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
 			},
 			Props: []*sqm.Property{
-				&sqm.Property{"name", sqm.TString, "s1"},
-				&sqm.Property{"azimut", sqm.TNumber, "30.2"},
-				&sqm.Property{"side", sqm.TString, "EMPTY"},
-				&sqm.Property{"vehicle", sqm.TString, "HeliH"},
-				&sqm.Property{"skill", sqm.TNumber, "0.6"},
-				&sqm.Property{"presence", sqm.TNumber, "0.3"},
-				&sqm.Property{"presenceCondition", sqm.TString, "true"},
-				&sqm.Property{"special", sqm.TString, "NONE"},
+				&sqm.Property{"text", sqm.TString, "s1"},
 			},
 		}
 		vehsClass := &sqm.Class{
@@ -418,32 +430,11 @@ func TestParseVehicles(t *testing.T) {
 			},
 		}
 
-		Convey("When parse sensors", func() {
+		Convey("When parse vehicles", func() {
 			mission := &Mission{}
 			p.parseVehicles(vehsClass, mission)
 			Convey("Mission has one vehicle", func() {
 				So(len(mission.Vehicles), ShouldEqual, 1)
-			})
-			Convey("Vehicle has classname", func() {
-				So(mission.Vehicles[0].Classname, ShouldEqual, "HeliH")
-			})
-		})
-		Convey("When parse single vehicle", func() {
-			v := &Vehicle{}
-			p.parseVehicle(vehClass, v)
-			Convey("All properties are correct", func() {
-				So(v.Name, ShouldEqual, "s1")
-				So(v.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
-				So(v.Angle, ShouldEqual, "30.2")
-				So(v.Side, ShouldEqual, "EMPTY")
-				So(v.Classname, ShouldEqual, "HeliH")
-				So(v.Skill, ShouldEqual, "0.6")
-				So(v.Presence, ShouldEqual, "0.3")
-				So(v.PresenceCond, ShouldEqual, "true")
-				So(v.Special, ShouldEqual, "NONE")
-			})
-			Convey("Pointer to class was set", func() {
-				So(v.class, ShouldPointTo, vehClass)
 			})
 		})
 	})

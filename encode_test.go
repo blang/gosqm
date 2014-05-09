@@ -111,29 +111,30 @@ func TestEncodeMissionProps(t *testing.T) {
 	})
 }
 
-func TestEncodeUnit(t *testing.T) {
-	Convey("Given fresh unit", t, func() {
-		unit := &Unit{
-			Name:         "name",
-			Position:     [3]string{"1.0", "2.0", "3.0"},
-			Direction:    "0.3",
-			Classname:    "classname",
-			Skill:        "0.1",
-			Special:      "FORM",
-			IsLeader:     true,
-			Player:       "PLAYER COMMANDER",
-			Description:  "Description",
-			Presence:     "0.3",
-			PresenceCond: "true",
-			Placement:    "20",
-			Age:          "5 MIN",
-			Lock:         "UNLOCKED",
-			Rank:         "CORPORAL",
-			Health:       "0.1",
-			Fuel:         "0.2",
-			Ammo:         "0.3",
-			Init:         "hint a",
-			Side:         "WEST",
+func TestEncodeVehicle(t *testing.T) {
+	Convey("Given fresh unit/vehicle", t, func() {
+		veh := &Vehicle{
+			Name:                "name",
+			Position:            [3]string{"1.0", "2.0", "3.0"},
+			Angle:               "0.3",
+			Classname:           "classname",
+			Skill:               "0.1",
+			Special:             "FORM",
+			IsLeader:            true,
+			Player:              "PLAYER COMMANDER",
+			Description:         "Description",
+			Presence:            "0.3",
+			PresenceCond:        "true",
+			Placement:           "20",
+			Age:                 "5 MIN",
+			Lock:                "UNLOCKED",
+			Rank:                "CORPORAL",
+			Health:              "0.1",
+			Fuel:                "0.2",
+			Ammo:                "0.3",
+			Init:                "hint a",
+			Side:                "WEST",
+			ForceHeadlessClient: true,
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"test", sqm.TString, "init"},
@@ -141,9 +142,9 @@ func TestEncodeUnit(t *testing.T) {
 			},
 		}
 		var idCount counter
-		Convey("When encoding unit", func() {
+		Convey("When encoding vehicle", func() {
 			class := &sqm.Class{}
-			encodeUnit(unit, class, &idCount)
+			encodeVehicle(veh, class, &idCount)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"id", sqm.TNumber, "1"})
@@ -166,6 +167,7 @@ func TestEncodeUnit(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"ammo", sqm.TNumber, "0.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "hint a"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "WEST"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"forceHeadlessClient", sqm.TNumber, "1"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"test", sqm.TString, "init"})
@@ -347,48 +349,6 @@ func TestEncodeSensor(t *testing.T) {
 	})
 }
 
-func TestEncodeVehicle(t *testing.T) {
-	Convey("Given a fresh vehicle", t, func() {
-		v := &Vehicle{
-			Name:         "vehicle",
-			Position:     [3]string{"1.0", "2.0", "3.0"},
-			Angle:        "12.3",
-			Classname:    "classname",
-			Skill:        "0.2",
-			Side:         "EMPTY",
-			Presence:     "0.3",
-			PresenceCond: "true",
-			Special:      "NONE",
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"missing", sqm.TString, "missing"},
-				},
-			},
-		}
-		var idCount counter
-		Convey("When encoding vehicle", func() {
-			class := &sqm.Class{}
-			encodeVehicle(v, class, &idCount)
-			Convey("Class properties should be set correctly", func() {
-				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
-				So(class.Props, ShouldContainProp, &sqm.Property{"id", sqm.TNumber, "1"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "vehicle"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"angle", sqm.TNumber, "12.3"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"vehicle", sqm.TString, "classname"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"skill", sqm.TNumber, "0.2"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "EMPTY"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"presence", sqm.TNumber, "0.3"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"presenceCondition", sqm.TString, "true"})
-				So(class.Props, ShouldContainProp, &sqm.Property{"special", sqm.TString, "NONE"})
-			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
-			})
-		})
-
-	})
-}
-
 func TestEncodeMission(t *testing.T) {
 	Convey("Given a fresh mission", t, func() {
 		m := &Mission{
@@ -407,8 +367,8 @@ func TestEncodeMission(t *testing.T) {
 			Groups: []*Group{
 				&Group{
 					Side: "WEST",
-					Units: []*Unit{
-						&Unit{
+					Units: []*Vehicle{
+						&Vehicle{
 							Name:     "unit",
 							Position: [3]string{"1.0", "2.0", "3.0"},
 						},
