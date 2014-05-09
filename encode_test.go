@@ -181,9 +181,10 @@ func TestEncodeVehicle(t *testing.T) {
 func TestEncodeWaypoint(t *testing.T) {
 	Convey("Given fresh waypoint", t, func() {
 		wp := &Waypoint{
-			Type:     "AND",
-			Position: [3]string{"1.0", "2.0", "3.0"},
-			ShowWP:   "NEVER",
+			Type:             "AND",
+			Position:         [3]string{"1.0", "2.0", "3.0"},
+			ShowWP:           "NEVER",
+			Synchronizations: []string{"1", "2"},
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"missing", sqm.TString, "missing"},
@@ -205,6 +206,7 @@ func TestEncodeWaypoint(t *testing.T) {
 			encodeWaypoint(wp, class)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"synchronizations", sqm.TNumber, []string{"1", "2"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"showWP", sqm.TString, "NEVER"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "AND"})
 			})
@@ -275,24 +277,25 @@ func TestEncodeMarker(t *testing.T) {
 func TestEncodeSensor(t *testing.T) {
 	Convey("Given a fresh sensor", t, func() {
 		s := &Sensor{
-			Name:            "sensor",
-			Position:        [3]string{"1.0", "2.0", "3.0"},
-			Size:            [2]string{"100", "200"},
-			Angle:           "12.3",
-			IsRectangle:     true,
-			ActivationBy:    "ANY",
-			ActivationType:  "GUER D",
-			TimeoutMin:      "1",
-			TimeoutMid:      "2",
-			TimeoutMax:      "3",
-			Type:            "EAST G",
-			IsRepeating:     true,
-			Age:             "UNKNOWN",
-			Condition:       "isServer",
-			OnActivation:    "hint test",
-			OnDeactivation:  "hint test2",
-			Text:            "triggertext",
-			IsInterruptible: true,
+			Name:             "sensor",
+			Position:         [3]string{"1.0", "2.0", "3.0"},
+			Size:             [2]string{"100", "200"},
+			Angle:            "12.3",
+			IsRectangle:      true,
+			ActivationBy:     "ANY",
+			ActivationType:   "GUER D",
+			TimeoutMin:       "1",
+			TimeoutMid:       "2",
+			TimeoutMax:       "3",
+			Type:             "EAST G",
+			IsRepeating:      true,
+			Age:              "UNKNOWN",
+			Condition:        "isServer",
+			OnActivation:     "hint test",
+			OnDeactivation:   "hint test2",
+			Text:             "triggertext",
+			IsInterruptible:  true,
+			Synchronizations: []string{"1", "2"},
 			Effects: &Effects{
 				Sound:       "sound",
 				Voice:       "voice",
@@ -303,6 +306,7 @@ func TestEncodeSensor(t *testing.T) {
 				Title:       "title",
 				TitleEffect: "titleeffect",
 			},
+			VehicleID: "1",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"missing", sqm.TString, "missing"},
@@ -314,6 +318,7 @@ func TestEncodeSensor(t *testing.T) {
 			encodeSensor(s, class)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"synchronizations", sqm.TNumber, []string{"1", "2"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"name", sqm.TString, "sensor"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"a", sqm.TNumber, "100"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"b", sqm.TNumber, "200"})
@@ -332,6 +337,7 @@ func TestEncodeSensor(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"expDesactiv", sqm.TString, "hint test2"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"interruptable", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "triggertext"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"idVehicle", sqm.TNumber, "1"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})

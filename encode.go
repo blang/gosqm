@@ -199,6 +199,7 @@ func encodeSensors(sensors []*Sensor, class *sqm.Class) {
 func encodeSensor(s *Sensor, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, s.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"synchronizations", sqm.TNumber, s.Synchronizations[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"name", sqm.TString, s.Name})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"a", sqm.TNumber, s.Size[0]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"b", sqm.TNumber, s.Size[1]})
@@ -223,6 +224,7 @@ func encodeSensor(s *Sensor, class *sqm.Class) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expCond", sqm.TString, s.Condition})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expActiv", sqm.TString, s.OnActivation})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"expDesactiv", sqm.TString, s.OnDeactivation})
+	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"idVehicle", sqm.TNumber, s.VehicleID})
 	if s.class != nil {
 		class.Props = addMissingProps(reg, class.Props, s.class.Props)
 		class.Arrprops = addMissingArrProps(reg, class.Arrprops, s.class.Arrprops)
@@ -414,6 +416,7 @@ func encodeWaypoints(waypoints []*Waypoint, class *sqm.Class) {
 func encodeWaypoint(w *Waypoint, class *sqm.Class) {
 	reg := make(map[string]bool)
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, w.Position[:]})
+	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"synchronizations", sqm.TNumber, w.Synchronizations[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"type", sqm.TString, w.Type})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"showWP", sqm.TString, w.ShowWP})
 	if w.Effects != nil {

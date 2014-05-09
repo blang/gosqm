@@ -102,6 +102,7 @@ func TestParseGroups(t *testing.T) {
 			},
 			Arrprops: []*sqm.ArrayProperty{
 				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"synchronizations", sqm.TNumber, []string{"1", "2"}},
 			},
 			Classes: []*sqm.Class{effectsClass},
 		}
@@ -163,6 +164,7 @@ func TestParseGroups(t *testing.T) {
 			p.parseGroupWaypoint(waypointclass, wp)
 			Convey("All properties are correct", func() {
 				So(wp.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+				So(wp.Synchronizations, ShouldResemble, []string{"1", "2"})
 				So(wp.Type, ShouldEqual, "AND")
 				So(wp.ShowWP, ShouldEqual, "NEVER")
 			})
@@ -333,6 +335,7 @@ func TestParseSensors(t *testing.T) {
 			Name: "Item0",
 			Arrprops: []*sqm.ArrayProperty{
 				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"synchronizations", sqm.TNumber, []string{"1", "2"}},
 			},
 			Props: []*sqm.Property{
 				&sqm.Property{"name", sqm.TString, "s1"},
@@ -353,6 +356,7 @@ func TestParseSensors(t *testing.T) {
 				&sqm.Property{"expActiv", sqm.TString, "hint a1"},
 				&sqm.Property{"expDesactiv", sqm.TString, "hint a2"},
 				&sqm.Property{"text", sqm.TString, "triggertext"},
+				&sqm.Property{"idVehicle", sqm.TNumber, "1"},
 			},
 			Classes: []*sqm.Class{effectsClass},
 		}
@@ -378,6 +382,7 @@ func TestParseSensors(t *testing.T) {
 			p.parseSensor(sensorClass, s)
 			Convey("All properties are correct", func() {
 				So(s.Name, ShouldEqual, "s1")
+				So(s.Synchronizations, ShouldResemble, []string{"1", "2"})
 				So(s.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
 				So(s.Size, ShouldResemble, [2]string{"1000", "2000"})
 				So(s.Angle, ShouldEqual, "38.8545")
@@ -395,6 +400,7 @@ func TestParseSensors(t *testing.T) {
 				So(s.OnActivation, ShouldEqual, "hint a1")
 				So(s.OnDeactivation, ShouldEqual, "hint a2")
 				So(s.Text, ShouldEqual, "triggertext")
+				So(s.VehicleID, ShouldEqual, "1")
 			})
 			Convey("Pointer to class was set", func() {
 				So(s.class, ShouldPointTo, sensorClass)

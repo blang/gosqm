@@ -278,6 +278,8 @@ func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
 		switch arrprop.Name {
 		case "position":
 			wp.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		case "synchronizations":
+			wp.Synchronizations = arrprop.Values
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   class,
@@ -484,6 +486,8 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 			sensor.IsInterruptible = prop.Value == "1"
 		case "text":
 			sensor.Text = prop.Value
+		case "idVehicle":
+			sensor.VehicleID = prop.Value
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,
@@ -496,6 +500,8 @@ func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
 		switch arrprop.Name {
 		case "position":
 			sensor.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		case "synchronizations":
+			sensor.Synchronizations = arrprop.Values
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   c,

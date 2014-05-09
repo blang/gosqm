@@ -22,11 +22,12 @@ type Group struct {
 }
 
 type Waypoint struct {
-	Position [3]string
-	Type     string
-	ShowWP   string
-	Effects  *Effects
-	class    *sqm.Class
+	Position         [3]string
+	Type             string
+	ShowWP           string
+	Effects          *Effects
+	Synchronizations []string
+	class            *sqm.Class
 }
 
 type Vehicle struct {
@@ -70,26 +71,28 @@ type Marker struct {
 }
 
 type Sensor struct {
-	Name            string
-	Position        [3]string
-	Size            [2]string
-	Angle           string
-	IsRectangle     bool
-	ActivationBy    string
-	ActivationType  string
-	TimeoutMin      string
-	TimeoutMid      string
-	TimeoutMax      string
-	Type            string
-	IsRepeating     bool
-	Age             string
-	Condition       string
-	OnActivation    string
-	OnDeactivation  string
-	IsInterruptible bool
-	Text            string
-	Effects         *Effects
-	class           *sqm.Class
+	Name             string
+	Position         [3]string
+	Size             [2]string
+	Angle            string
+	IsRectangle      bool
+	ActivationBy     string
+	ActivationType   string
+	TimeoutMin       string
+	TimeoutMid       string
+	TimeoutMax       string
+	Type             string
+	IsRepeating      bool
+	Age              string
+	Condition        string
+	OnActivation     string
+	OnDeactivation   string
+	IsInterruptible  bool
+	Text             string
+	Synchronizations []string
+	VehicleID        string
+	Effects          *Effects
+	class            *sqm.Class
 }
 
 type Effects struct {
