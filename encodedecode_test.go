@@ -164,6 +164,9 @@ func TestFullEncodeDecode(t *testing.T) {
 		t.Fatalf("Can't parse class to missionfile, %q", err)
 		return
 	}
+	for _, perr := range mp.Warnings() {
+		t.Logf("Warning: " + perr.Error() + "\n")
+	}
 	enc := NewEncoder()
 	eclass := enc.Encode(missionFile)
 	var ebuf []byte
