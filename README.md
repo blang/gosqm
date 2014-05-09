@@ -39,6 +39,16 @@ Stability
 
 Currently safely supports Arma2 mission files. Interfaces are subject to change.
 
+Benchmarks
+-----
+A full decode and encode cycle in <6ms on a medium machine.
+
+	BenchmarkFullDecode	         500	   4295337 ns/op
+	BenchmarkFullEncode	        2000	    999859 ns/op
+	BenchmarkMissionEncode	    5000	    508818 ns/op
+	BenchmarkMissionDecode	   10000	    113710 ns/op
+	BenchmarkFullEncodeDecode	 500	   5345543 ns/op
+
 Issues
 -----
 
