@@ -370,6 +370,8 @@ func (p *Parser) parseVehicle(class *sqm.Class, veh *Vehicle) {
 		switch arrprop.Name {
 		case "position":
 			veh.Position = [3]string{arrprop.Values[0], arrprop.Values[1], arrprop.Values[2]}
+		case "markers":
+			veh.Markers = arrprop.Values[:]
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass:   class,

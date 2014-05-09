@@ -340,6 +340,7 @@ func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
 	reg := make(map[string]bool)
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"id", sqm.TNumber, strconv.Itoa(int(counter.inc()))})
 	class.Arrprops = addArrProp(reg, class.Arrprops, &sqm.ArrayProperty{"position", sqm.TNumber, v.Position[:]})
+	class.Arrprops = addArrPropOmitEmpty(reg, class.Arrprops, &sqm.ArrayProperty{"markers", sqm.TString, v.Markers[:]})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"text", sqm.TString, v.Name})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"azimut", sqm.TNumber, v.Angle})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})

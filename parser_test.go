@@ -217,6 +217,7 @@ func TestParseVehicle(t *testing.T) {
 
 			Arrprops: []*sqm.ArrayProperty{
 				&sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}},
+				&sqm.ArrayProperty{"markers", sqm.TNumber, []string{"a", "b"}},
 			},
 		}
 		Convey("When parse vehicle", func() {
@@ -230,6 +231,7 @@ func TestParseVehicle(t *testing.T) {
 				So(veh.IsLeader, ShouldBeTrue)
 				So(veh.Skill, ShouldEqual, "0.60000002")
 				So(veh.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
+				So(veh.Markers, ShouldResemble, []string{"a", "b"})
 				So(veh.Player, ShouldEqual, "PLAYER COMMANDER")
 				So(veh.Description, ShouldEqual, "Description")
 				So(veh.Presence, ShouldEqual, "0.3")

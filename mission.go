@@ -50,6 +50,7 @@ type Vehicle struct {
 	Ammo                string
 	Init                string
 	Side                string
+	Markers             []string
 	ForceHeadlessClient bool
 	class               *sqm.Class
 }

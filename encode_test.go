@@ -135,6 +135,7 @@ func TestEncodeVehicle(t *testing.T) {
 			Init:                "hint a",
 			Side:                "WEST",
 			ForceHeadlessClient: true,
+			Markers:             []string{"a", "b"},
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"test", sqm.TString, "init"},
@@ -147,6 +148,7 @@ func TestEncodeVehicle(t *testing.T) {
 			encodeVehicle(veh, class, &idCount)
 			Convey("Class properties should be set correctly", func() {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"position", sqm.TNumber, []string{"1.0", "2.0", "3.0"}})
+				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"markers", sqm.TString, []string{"a", "b"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"id", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "name"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"azimut", sqm.TNumber, "0.3"})
