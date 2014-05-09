@@ -95,46 +95,52 @@ func (e *Encoder) encodeMission(mission *Mission, class *sqm.Class) {
 	}()
 	class.Classes = append(class.Classes, intelClass)
 
-	groupsClass := &sqm.Class{
-		Name: "Groups",
+	if len(mission.Groups) > 0 {
+		groupsClass := &sqm.Class{
+			Name: "Groups",
+		}
+		e.wg.Add(1)
+		go func() {
+			e.encodeGroups(mission.Groups, groupsClass, &counter)
+			e.wg.Done()
+		}()
+		class.Classes = append(class.Classes, groupsClass)
 	}
-	e.wg.Add(1)
-	go func() {
-		e.encodeGroups(mission.Groups, groupsClass, &counter)
-		e.wg.Done()
-	}()
-	class.Classes = append(class.Classes, groupsClass)
 
-	markersClass := &sqm.Class{
-		Name: "Markers",
+	if len(mission.Markers) > 0 {
+		markersClass := &sqm.Class{
+			Name: "Markers",
+		}
+		e.wg.Add(1)
+		go func() {
+			encodeMarkers(mission.Markers, markersClass)
+			e.wg.Done()
+		}()
+		class.Classes = append(class.Classes, markersClass)
 	}
-	e.wg.Add(1)
-	go func() {
-		encodeMarkers(mission.Markers, markersClass)
-		e.wg.Done()
-	}()
-	class.Classes = append(class.Classes, markersClass)
 
-	sensorsClass := &sqm.Class{
-		Name: "Sensors",
+	if len(mission.Sensors) > 0 {
+		sensorsClass := &sqm.Class{
+			Name: "Sensors",
+		}
+		e.wg.Add(1)
+		go func() {
+			encodeSensors(mission.Sensors, sensorsClass)
+			e.wg.Done()
+		}()
+		class.Classes = append(class.Classes, sensorsClass)
 	}
-	e.wg.Add(1)
-	go func() {
-		encodeSensors(mission.Sensors, sensorsClass)
-		e.wg.Done()
-	}()
-	class.Classes = append(class.Classes, sensorsClass)
-
-	vehsClass := &sqm.Class{
-		Name: "Vehicles",
+	if len(mission.Vehicles) > 0 {
+		vehsClass := &sqm.Class{
+			Name: "Vehicles",
+		}
+		e.wg.Add(1)
+		go func() {
+			e.encodeVehicles(mission.Vehicles, vehsClass, &counter)
+			e.wg.Done()
+		}()
+		class.Classes = append(class.Classes, vehsClass)
 	}
-	e.wg.Add(1)
-	go func() {
-		e.encodeVehicles(mission.Vehicles, vehsClass, &counter)
-		e.wg.Done()
-	}()
-	class.Classes = append(class.Classes, vehsClass)
-
 }
 
 func encodeMissionProperties(mission *Mission, class *sqm.Class) {
