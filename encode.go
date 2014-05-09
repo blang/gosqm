@@ -2,6 +2,7 @@ package mission
 
 import (
 	"github.com/blang/gosqm/sqm"
+	"io"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -9,6 +10,7 @@ import (
 
 type Encoder struct {
 	wg *sync.WaitGroup
+	w  io.Writer
 }
 
 type counter int32
@@ -20,14 +22,29 @@ func (c *counter) get() int32 {
 	return atomic.LoadInt32((*int32)(c))
 }
 
-func NewEncoder() *Encoder {
+func NewClassEncoder() *Encoder {
 	e := &Encoder{
 		wg: &sync.WaitGroup{},
 	}
 	return e
 }
 
-func (e *Encoder) Encode(missionFile *MissionFile) *sqm.Class {
+func NewEncoder(w io.Writer) *Encoder {
+	e := &Encoder{
+		wg: &sync.WaitGroup{},
+		w:  w,
+	}
+	return e
+}
+
+func (e *Encoder) Encode(missionFile *MissionFile) error {
+	class := e.EncodeToClass(missionFile)
+	sqmenc := sqm.NewEncoder(e.w)
+	return sqmenc.Encode(class)
+}
+
+func (e *Encoder) EncodeToClass(missionFile *MissionFile) *sqm.Class {
+	e.wg = &sync.WaitGroup{}
 	c := e.encodeMissionFile(missionFile)
 	e.wg.Wait()
 	return c
