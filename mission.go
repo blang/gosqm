@@ -49,6 +49,7 @@ type Unit struct {
 	Fuel         string
 	Ammo         string
 	Init         string
+	Side         string
 	class        *sqm.Class
 }
 

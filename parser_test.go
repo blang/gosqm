@@ -92,6 +92,7 @@ func TestParseGroups(t *testing.T) {
 				&sqm.Property{"fuel", sqm.TNumber, "0.2"},
 				&sqm.Property{"ammo", sqm.TNumber, "0.3"},
 				&sqm.Property{"init", sqm.TString, "hint a"},
+				&sqm.Property{"side", sqm.TString, "WEST"},
 			},
 
 			Arrprops: []*sqm.ArrayProperty{
@@ -176,6 +177,7 @@ func TestParseGroups(t *testing.T) {
 				So(unit.Fuel, ShouldEqual, "0.2")
 				So(unit.Ammo, ShouldEqual, "0.3")
 				So(unit.Init, ShouldEqual, "hint a")
+				So(unit.Side, ShouldEqual, "WEST")
 			})
 			Convey("Pointer to class was set", func() {
 				So(unit.class, ShouldPointTo, unitclass)

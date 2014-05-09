@@ -187,7 +187,11 @@ func encodeVehicle(v *Vehicle, class *sqm.Class, counter *counter) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"angle", sqm.TNumber, v.Angle})
 	class.Props = addProp(reg, class.Props, &sqm.Property{"vehicle", sqm.TString, v.Classname})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"skill", sqm.TNumber, v.Skill})
-	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+	if v.Side == "" {
+		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, "EMPTY"})
+	} else {
+		class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, v.Side})
+	}
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presence", sqm.TNumber, v.Presence})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"presenceCondition", sqm.TString, v.PresenceCond})
 	if v.class != nil {
@@ -371,6 +375,7 @@ func encodeUnit(u *Unit, class *sqm.Class, counter *counter) {
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"fuel", sqm.TNumber, u.Fuel})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"ammo", sqm.TNumber, u.Ammo})
 	class.Props = addPropOmitEmpty(reg, class.Props, &sqm.Property{"init", sqm.TString, u.Init})
+	class.Props = addProp(reg, class.Props, &sqm.Property{"side", sqm.TString, u.Side})
 
 	if u.class != nil {
 		class.Props = addMissingProps(reg, class.Props, u.class.Props)

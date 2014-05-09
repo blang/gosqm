@@ -133,6 +133,7 @@ func TestEncodeUnit(t *testing.T) {
 			Fuel:         "0.2",
 			Ammo:         "0.3",
 			Init:         "hint a",
+			Side:         "WEST",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"test", sqm.TString, "init"},
@@ -164,6 +165,7 @@ func TestEncodeUnit(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"fuel", sqm.TNumber, "0.2"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"ammo", sqm.TNumber, "0.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"init", sqm.TString, "hint a"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "WEST"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"test", sqm.TString, "init"})

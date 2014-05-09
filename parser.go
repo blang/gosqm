@@ -316,6 +316,8 @@ func (p *Parser) parseGroupMember(class *sqm.Class, unit *Unit) {
 			unit.Ammo = prop.Value
 		case "init":
 			unit.Init = prop.Value
+		case "side":
+			unit.Side = prop.Value
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass: class,
