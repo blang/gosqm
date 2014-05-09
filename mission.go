@@ -1,24 +1,17 @@
 package mission
 
-import (
-	"github.com/blang/gosqm/sqm"
-)
-
 type MissionFile struct {
 	Version    string
 	Mission    *Mission
 	Intro      *Mission
 	OutroWin   *Mission
 	OutroLoose *Mission
-	class      *sqm.Class
 }
 
 type Group struct {
 	Side      string
 	Waypoints []*Waypoint
 	Units     []*Vehicle
-	class     *sqm.Class
-	// Leader    *Unit
 }
 
 type Waypoint struct {
@@ -27,7 +20,6 @@ type Waypoint struct {
 	ShowWP           string
 	Effects          *Effects
 	Synchronizations []string
-	class            *sqm.Class
 }
 
 type Vehicle struct {
@@ -53,7 +45,6 @@ type Vehicle struct {
 	Side                string
 	Markers             []string
 	ForceHeadlessClient bool
-	class               *sqm.Class
 }
 
 type Marker struct {
@@ -67,7 +58,6 @@ type Marker struct {
 	FillName   string
 	DrawBorder bool
 	Size       [2]string
-	class      *sqm.Class
 }
 
 type Sensor struct {
@@ -92,7 +82,6 @@ type Sensor struct {
 	Synchronizations []string
 	VehicleID        string
 	Effects          *Effects
-	class            *sqm.Class
 }
 
 type Effects struct {
@@ -115,7 +104,6 @@ type Mission struct {
 	Vehicles   []*Vehicle
 	Markers    []*Marker
 	Sensors    []*Sensor
-	class      *sqm.Class
 }
 
 type Intel struct {
@@ -127,5 +115,4 @@ type Intel struct {
 	Day             string
 	Hour            string
 	Minute          string
-	class           *sqm.Class
 }

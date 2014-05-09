@@ -76,7 +76,6 @@ func (p *Parser) Parse(class *sqm.Class) (*MissionFile, error) {
 	}
 
 	mf := &MissionFile{}
-	mf.class = class
 
 	mf.Intro = &Mission{}
 	mf.Mission = &Mission{}
@@ -178,7 +177,6 @@ func (p *Parser) parseMissionProps(class *sqm.Class, mission *Mission) {
 
 func (p *Parser) parseIntel(class *sqm.Class, mission *Mission) {
 	intel := &Intel{}
-	intel.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
 		case "resistanceWest":
@@ -219,7 +217,6 @@ func (p *Parser) parseGroups(class *sqm.Class, mission *Mission) {
 
 //TODO: Cross Side grouping possible in editor?
 func (p *Parser) parseGroup(class *sqm.Class, group *Group) {
-	group.class = class
 	//parse side
 	for _, prop := range class.Props {
 		switch prop.Name {
@@ -259,7 +256,6 @@ func (p *Parser) parseGroupWaypoints(class *sqm.Class, group *Group) {
 }
 
 func (p *Parser) parseGroupWaypoint(class *sqm.Class, wp *Waypoint) {
-	wp.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
 		case "type":
@@ -315,7 +311,6 @@ func (p *Parser) parseGroupMembers(class *sqm.Class, group *Group) {
 }
 
 func (p *Parser) parseVehicle(class *sqm.Class, veh *Vehicle) {
-	veh.class = class
 	for _, prop := range class.Props {
 		switch prop.Name {
 		case "id":
@@ -393,7 +388,6 @@ func (p *Parser) parseMarkers(class *sqm.Class, mission *Mission) {
 }
 
 func (p *Parser) parseMarker(c *sqm.Class, marker *Marker) {
-	marker.class = c
 	for _, prop := range c.Props {
 		switch prop.Name {
 		case "name":
@@ -447,7 +441,6 @@ func (p *Parser) parseSensors(class *sqm.Class, mission *Mission) {
 }
 
 func (p *Parser) parseSensor(c *sqm.Class, sensor *Sensor) {
-	sensor.class = c
 	for _, prop := range c.Props {
 		switch prop.Name {
 		case "name":

@@ -61,9 +61,6 @@ func TestParseIntel(t *testing.T) {
 				So(i.Hour, ShouldEqual, "6")
 				So(i.Minute, ShouldEqual, "5")
 			})
-			Convey("Pointer to class was set", func() {
-				So(i.class, ShouldPointTo, intelclass)
-			})
 		})
 	})
 }
@@ -168,9 +165,6 @@ func TestParseGroups(t *testing.T) {
 				So(wp.Type, ShouldEqual, "AND")
 				So(wp.ShowWP, ShouldEqual, "NEVER")
 			})
-			Convey("Pointer to class was set", func() {
-				So(wp.class, ShouldPointTo, waypointclass)
-			})
 			Convey("Effects was set", func() {
 				So(wp.Effects, ShouldNotBeNil)
 				eff := wp.Effects
@@ -249,9 +243,6 @@ func TestParseVehicle(t *testing.T) {
 				So(veh.Side, ShouldEqual, "WEST")
 				So(veh.ForceHeadlessClient, ShouldBeTrue)
 			})
-			Convey("Pointer to class was set", func() {
-				So(veh.class, ShouldPointTo, vehclass)
-			})
 		})
 
 	})
@@ -307,9 +298,6 @@ func TestParseMarkers(t *testing.T) {
 				So(m.Size, ShouldResemble, [2]string{"1000", "2000"})
 				So(m.DrawBorder, ShouldBeTrue)
 				So(m.Position, ShouldResemble, [3]string{"1.0", "2.0", "3.0"})
-			})
-			Convey("Pointer to class was set", func() {
-				So(m.class, ShouldPointTo, markerClass)
 			})
 		})
 	})
@@ -401,9 +389,6 @@ func TestParseSensors(t *testing.T) {
 				So(s.OnDeactivation, ShouldEqual, "hint a2")
 				So(s.Text, ShouldEqual, "triggertext")
 				So(s.VehicleID, ShouldEqual, "1")
-			})
-			Convey("Pointer to class was set", func() {
-				So(s.class, ShouldPointTo, sensorClass)
 			})
 			Convey("Effects should be set", func() {
 				So(s.Effects, ShouldNotBeNil)

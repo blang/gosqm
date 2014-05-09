@@ -65,11 +65,6 @@ func TestEncodeIntel(t *testing.T) {
 			Day:             "28",
 			Hour:            "6",
 			Minute:          "5",
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"startFog", sqm.TNumber, "0.1"},
-				},
-			},
 		}
 		Convey("When encoding intel", func() {
 			class := &sqm.Class{}
@@ -84,10 +79,6 @@ func TestEncodeIntel(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"hour", sqm.TNumber, "6"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"minute", sqm.TNumber, "5"})
 			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"startFog", sqm.TNumber, "0.1"})
-			})
-
 		})
 	})
 }
@@ -136,11 +127,6 @@ func TestEncodeVehicle(t *testing.T) {
 			Side:                "WEST",
 			ForceHeadlessClient: true,
 			Markers:             []string{"a", "b"},
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"test", sqm.TString, "init"},
-				},
-			},
 		}
 		var idCount counter
 		Convey("When encoding vehicle", func() {
@@ -171,9 +157,6 @@ func TestEncodeVehicle(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "WEST"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"forceHeadlessClient", sqm.TNumber, "1"})
 			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"test", sqm.TString, "init"})
-			})
 		})
 	})
 }
@@ -185,11 +168,6 @@ func TestEncodeWaypoint(t *testing.T) {
 			Position:         [3]string{"1.0", "2.0", "3.0"},
 			ShowWP:           "NEVER",
 			Synchronizations: []string{"1", "2"},
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"missing", sqm.TString, "missing"},
-				},
-			},
 			Effects: &Effects{
 				Sound:       "sound",
 				Voice:       "voice",
@@ -209,9 +187,6 @@ func TestEncodeWaypoint(t *testing.T) {
 				So(class.Arrprops, ShouldContainProp, &sqm.ArrayProperty{"synchronizations", sqm.TNumber, []string{"1", "2"}})
 				So(class.Props, ShouldContainProp, &sqm.Property{"showWP", sqm.TString, "NEVER"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"type", sqm.TString, "AND"})
-			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
 			})
 			Convey("Effects class should be set", func() {
 				So(len(class.Classes), ShouldEqual, 1)
@@ -245,11 +220,6 @@ func TestEncodeMarker(t *testing.T) {
 			FillName:   "Border",
 			DrawBorder: true,
 			Size:       [2]string{"100", "200"},
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"missing", sqm.TString, "missing"},
-				},
-			},
 		}
 		Convey("When encoding marker", func() {
 			class := &sqm.Class{}
@@ -266,9 +236,6 @@ func TestEncodeMarker(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"drawBorder", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"a", sqm.TNumber, "100"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"b", sqm.TNumber, "200"})
-			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
 			})
 		})
 	})
@@ -307,11 +274,6 @@ func TestEncodeSensor(t *testing.T) {
 				TitleEffect: "titleeffect",
 			},
 			VehicleID: "1",
-			class: &sqm.Class{
-				Props: []*sqm.Property{
-					&sqm.Property{"missing", sqm.TString, "missing"},
-				},
-			},
 		}
 		Convey("When encoding sensor", func() {
 			class := &sqm.Class{}
@@ -338,9 +300,6 @@ func TestEncodeSensor(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"interruptable", sqm.TNumber, "1"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"text", sqm.TString, "triggertext"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"idVehicle", sqm.TNumber, "1"})
-			})
-			Convey("Missing properties should be taken from parent class", func() {
-				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
 			})
 			Convey("Effects class should be set", func() {
 				So(len(class.Classes), ShouldEqual, 1)
