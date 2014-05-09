@@ -572,6 +572,8 @@ func (p *Parser) parseVehicle(c *sqm.Class, veh *Vehicle) {
 			veh.Presence = prop.Value
 		case "presenceCondition":
 			veh.PresenceCond = prop.Value
+		case "special":
+			veh.Special = prop.Value
 		default:
 			p.saveError(&UnkownPropertyError{
 				ParentClass: c,

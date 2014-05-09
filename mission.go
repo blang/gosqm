@@ -110,6 +110,7 @@ type Vehicle struct {
 	Side         string //Always empty?
 	Presence     string
 	PresenceCond string
+	Special      string
 }
 
 type Mission struct {

@@ -358,6 +358,7 @@ func TestEncodeVehicle(t *testing.T) {
 			Side:         "EMPTY",
 			Presence:     "0.3",
 			PresenceCond: "true",
+			Special:      "NONE",
 			class: &sqm.Class{
 				Props: []*sqm.Property{
 					&sqm.Property{"missing", sqm.TString, "missing"},
@@ -378,6 +379,7 @@ func TestEncodeVehicle(t *testing.T) {
 				So(class.Props, ShouldContainProp, &sqm.Property{"side", sqm.TString, "EMPTY"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"presence", sqm.TNumber, "0.3"})
 				So(class.Props, ShouldContainProp, &sqm.Property{"presenceCondition", sqm.TString, "true"})
+				So(class.Props, ShouldContainProp, &sqm.Property{"special", sqm.TString, "NONE"})
 			})
 			Convey("Missing properties should be taken from parent class", func() {
 				So(class.Props, ShouldContainProp, &sqm.Property{"missing", sqm.TString, "missing"})
